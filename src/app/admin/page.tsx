@@ -25,27 +25,6 @@ const COLORS = ['#6366f1', '#8b5cf6', '#ec4899', '#f59e0b'];
 export default function AdminPage() {
   const router = useRouter();
   const { isAuthenticated, isLoading, logout } = useAuth();
-
-  useEffect(() => {
-    if (!isLoading && !isAuthenticated) {
-      router.push('/login');
-    }
-  }, [isAuthenticated, isLoading, router]);
-
-  if (isLoading) {
-    return (
-      <div className="container mx-auto px-4 py-8">
-        <div className="flex items-center justify-center min-h-screen">
-          <p className="text-center">Loading...</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (!isAuthenticated) {
-    return null;
-  }
-
   const [dashboardData, setDashboardData] = useState<any>(null);
   const [leads, setLeads] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -72,14 +51,38 @@ export default function AdminPage() {
   }, [page]);
 
   useEffect(() => {
-    logEvent('page_view', { page: 'admin' });
-    analyticsApi.recordVisit('admin').catch(console.error);
-    loadDashboard();
-  }, [loadDashboard]);
+    if (!isLoading && !isAuthenticated) {
+      router.push('/login');
+    }
+  }, [isAuthenticated, isLoading, router]);
 
   useEffect(() => {
-    loadLeads();
-  }, [loadLeads]);
+    if (isAuthenticated) {
+      logEvent('page_view', { page: 'admin' });
+      analyticsApi.recordVisit('admin').catch(console.error);
+      loadDashboard();
+    }
+  }, [isAuthenticated, loadDashboard]);
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      loadLeads();
+    }
+  }, [isAuthenticated, loadLeads]);
+
+  if (isLoading) {
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <div className="flex items-center justify-center min-h-screen">
+          <p className="text-center">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) {
+    return null;
+  }
 
   if (loading) {
     return (
