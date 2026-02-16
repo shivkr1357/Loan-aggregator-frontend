@@ -2,10 +2,13 @@
 
 import { useEffect } from 'react';
 import Link from 'next/link';
+import { useUserAuth } from '@/contexts/UserAuthContext';
 import { logEvent } from '@/lib/firebase';
 import { analyticsApi } from '@/lib/api';
 
 export default function Home() {
+  const { user } = useUserAuth();
+
   useEffect(() => {
     // Track page view
     logEvent('page_view', { page: 'home' });
@@ -173,12 +176,22 @@ export default function Home() {
           <p className="text-xl mb-8 text-primary-100">
             Compare rates now and get approved in minutes
           </p>
-          <Link
-            href="/apply"
-            className="bg-white text-primary-600 hover:bg-gray-100 px-8 py-3 rounded-lg font-semibold transition inline-block"
-          >
-            Get Started
-          </Link>
+          <div className="flex gap-4 justify-center">
+            <Link
+              href="/apply"
+              className="bg-white text-primary-600 hover:bg-gray-100 px-8 py-3 rounded-lg font-semibold transition inline-block"
+            >
+              Get Started
+            </Link>
+            {user && (
+              <Link
+                href="/dashboard"
+                className="bg-primary-700 text-white hover:bg-primary-800 px-8 py-3 rounded-lg font-semibold transition inline-block border-2 border-white"
+              >
+                My Dashboard
+              </Link>
+            )}
+          </div>
         </div>
       </section>
     </div>
