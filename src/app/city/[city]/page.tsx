@@ -47,7 +47,7 @@ export default function CityPage({ params }: { params: { city: string } }) {
             </h2>
             <div className="prose max-w-none">
               <p className="text-lg text-gray-700 mb-4">
-                Looking for the best personal loan rates in {cityName}? You've
+                Looking for the best personal loan rates in {cityName}? You&apos;ve
                 come to the right place. Our platform helps you compare personal
                 loan offers from top banks and NBFCs, ensuring you get the best
                 deal tailored to your needs.

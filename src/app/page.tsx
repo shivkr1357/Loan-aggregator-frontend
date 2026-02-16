@@ -141,22 +141,22 @@ export default function Home() {
           <div className="grid md:grid-cols-3 gap-8">
             <div className="bg-gray-50 p-6 rounded-lg">
               <p className="text-gray-700 mb-4">
-                "Found the best loan rate in minutes. The process was smooth
-                and hassle-free."
+                &ldquo;Found the best loan rate in minutes. The process was smooth
+                and hassle-free.&rdquo;
               </p>
               <p className="font-semibold">- Rajesh K., Mumbai</p>
             </div>
             <div className="bg-gray-50 p-6 rounded-lg">
               <p className="text-gray-700 mb-4">
-                "Great platform to compare loans. Saved me a lot of time and
-                money!"
+                &ldquo;Great platform to compare loans. Saved me a lot of time and
+                money!&rdquo;
               </p>
               <p className="font-semibold">- Priya S., Delhi</p>
             </div>
             <div className="bg-gray-50 p-6 rounded-lg">
               <p className="text-gray-700 mb-4">
-                "Transparent process and excellent customer support. Highly
-                recommended!"
+                &ldquo;Transparent process and excellent customer support. Highly
+                recommended!&rdquo;
               </p>
               <p className="font-semibold">- Amit R., Bangalore</p>
             </div>

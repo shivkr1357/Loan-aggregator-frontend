@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { adminApi } from '@/lib/api';
 import { logEvent } from '@/lib/firebase';
 import { analyticsApi } from '@/lib/api';
@@ -26,14 +26,7 @@ export default function AdminPage() {
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
 
-  useEffect(() => {
-    logEvent('page_view', { page: 'admin' });
-    analyticsApi.recordVisit('admin').catch(console.error);
-    loadDashboard();
-    loadLeads();
-  }, [page]);
-
-  const loadDashboard = async () => {
+  const loadDashboard = useCallback(async () => {
     try {
       const response = await adminApi.getDashboard();
       setDashboardData(response.data);
@@ -42,16 +35,26 @@ export default function AdminPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
-  const loadLeads = async () => {
+  const loadLeads = useCallback(async () => {
     try {
       const response = await adminApi.getLeads(page, 20);
       setLeads(response.data.leads);
     } catch (error) {
       console.error('Error loading leads:', error);
     }
-  };
+  }, [page]);
+
+  useEffect(() => {
+    logEvent('page_view', { page: 'admin' });
+    analyticsApi.recordVisit('admin').catch(console.error);
+    loadDashboard();
+  }, [loadDashboard]);
+
+  useEffect(() => {
+    loadLeads();
+  }, [loadLeads]);
 
   if (loading) {
     return (

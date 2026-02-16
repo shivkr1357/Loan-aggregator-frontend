@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { loanApi } from '@/lib/api';
 import { logEvent } from '@/lib/firebase';
 import { analyticsApi } from '@/lib/api';
@@ -50,7 +50,7 @@ export default function LoansPage() {
     }
   };
 
-  const handleFilterChange = async () => {
+  const handleFilterChange = useCallback(async () => {
     try {
       setLoading(true);
       const filterParams: any = {};
@@ -69,7 +69,7 @@ export default function LoansPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [filters]);
 
   const calculateEMI = async () => {
     try {
@@ -90,7 +90,7 @@ export default function LoansPage() {
 
   useEffect(() => {
     handleFilterChange();
-  }, [filters.sortBy]);
+  }, [handleFilterChange]);
 
   return (
     <div className="container mx-auto px-4 py-8">
