@@ -1,12 +1,13 @@
 import Link from 'next/link';
+import Image from 'next/image';
+import logo from '@/assets/Logo.svg';
 
 export function Footer() {
   return (
-    <footer className="bg-navy-900 text-white mt-auto">
+    <footer className="bg-navy-900 text-white mt-auto text-center">
       <div className="container mx-auto px-4 py-8">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div>
-            <h3 className="text-xl font-bold mb-4">LoanPilot</h3>
             <p className="text-gray-400 text-sm">
               Your trusted partner for finding the best personal loan rates.
             </p>
