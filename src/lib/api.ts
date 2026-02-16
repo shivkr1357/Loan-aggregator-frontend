@@ -82,3 +82,20 @@ export const adminApi = {
     return response.data;
   },
 };
+
+export const authApi = {
+  syncUser: async (data: {
+    idToken: string;
+    email: string;
+    displayName?: string;
+    photoURL?: string;
+    phoneNumber?: string;
+  }) => {
+    const response = await apiClient.post(apiEndpoints.auth.sync, data);
+    return response.data;
+  },
+  getUser: async (userId: string) => {
+    const response = await apiClient.get(`${apiEndpoints.auth.getUser}/${userId}`);
+    return response.data;
+  },
+};

@@ -19,4 +19,8 @@ export const apiEndpoints = {
     dashboard: `${API_URL}/api/admin/dashboard`,
     leads: `${API_URL}/api/admin/leads`,
   },
+  auth: {
+    sync: `${API_URL}/api/auth/sync`,
+    getUser: `${API_URL}/api/auth/user`,
+  },
 };

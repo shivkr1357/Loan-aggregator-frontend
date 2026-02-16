@@ -66,7 +66,12 @@ export function Footer() {
                   Contact Us
                 </Link>
               </li>
-              <li className="text-gray-400">support@loanpilot.com</li>
+              <li>
+                <Link href="/support" className="text-gray-400 hover:text-white">
+                  Support Center
+                </Link>
+              </li>
+              <li className="text-gray-400">contact@loanpilot.in</li>
             </ul>
           </div>
         </div>

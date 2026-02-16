@@ -8,9 +8,11 @@ import {
   onAuthStateChanged,
 } from 'firebase/auth';
 import { auth, googleProvider } from '@/lib/firebase';
+import { authApi } from '@/lib/api';
 
 interface UserAuthContextType {
   user: User | null;
+  backendUser: any | null;
   loading: boolean;
   signInWithGoogle: () => Promise<void>;
   logout: () => Promise<void>;
@@ -22,7 +24,24 @@ const UserAuthContext = createContext<UserAuthContextType | undefined>(
 
 export function UserAuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
+  const [backendUser, setBackendUser] = useState<any | null>(null);
   const [loading, setLoading] = useState(true);
+
+  const syncUserWithBackend = async (firebaseUser: User) => {
+    try {
+      const idToken = await firebaseUser.getIdToken();
+      const userData = await authApi.syncUser({
+        idToken: firebaseUser.uid, // Use UID instead of token for now
+        email: firebaseUser.email || '',
+        displayName: firebaseUser.displayName || undefined,
+        photoURL: firebaseUser.photoURL || undefined,
+        phoneNumber: firebaseUser.phoneNumber || undefined,
+      });
+      setBackendUser(userData.data.user);
+    } catch (error) {
+      console.error('Error syncing user with backend:', error);
+    }
+  };
 
   useEffect(() => {
     if (!auth) {
@@ -30,8 +49,16 @@ export function UserAuthProvider({ children }: { children: ReactNode }) {
       return;
     }
 
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setUser(user);
+    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+      setUser(firebaseUser);
+      
+      if (firebaseUser) {
+        // Sync user with backend when authenticated
+        await syncUserWithBackend(firebaseUser);
+      } else {
+        setBackendUser(null);
+      }
+      
       setLoading(false);
     });
 
@@ -41,7 +68,8 @@ export function UserAuthProvider({ children }: { children: ReactNode }) {
   const signInWithGoogle = async () => {
     if (!auth) return;
     try {
-      await signInWithPopup(auth, googleProvider);
+      const result = await signInWithPopup(auth, googleProvider);
+      // User will be synced via onAuthStateChanged
     } catch (error) {
       console.error('Error signing in with Google:', error);
       throw error;
@@ -52,6 +80,7 @@ export function UserAuthProvider({ children }: { children: ReactNode }) {
     if (!auth) return;
     try {
       await signOut(auth);
+      setBackendUser(null);
     } catch (error) {
       console.error('Error signing out:', error);
       throw error;
@@ -60,7 +89,7 @@ export function UserAuthProvider({ children }: { children: ReactNode }) {
 
   return (
     <UserAuthContext.Provider
-      value={{ user, loading, signInWithGoogle, logout }}
+      value={{ user, backendUser, loading, signInWithGoogle, logout }}
     >
       {children}
     </UserAuthContext.Provider>
