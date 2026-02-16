@@ -5,14 +5,34 @@ import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import { logEvent } from '@/lib/firebase';
 import { analyticsApi } from '@/lib/api';
+import { generateStructuredData } from '@/lib/seo';
 
 export default function CityPage({ params }: { params: { city: string } }) {
   const city = params.city;
   const cityName = city.charAt(0).toUpperCase() + city.slice(1);
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://loanpilot.in';
 
   useEffect(() => {
     logEvent('page_view', { page: `city-${city}` });
     analyticsApi.recordVisit(`city/${city}`, cityName).catch(console.error);
+
+    // Add structured data for FinancialProduct
+    const financialProductData = generateStructuredData('FinancialProduct', {
+      name: `Personal Loan in ${cityName}`,
+      description: `Compare and find the best personal loan rates in ${cityName}`,
+      interestRate: '9.5%',
+      loanTerm: '12-60 months',
+      loanAmount: '50000',
+    });
+
+    const script = document.createElement('script');
+    script.type = 'application/ld+json';
+    script.text = JSON.stringify(financialProductData);
+    document.head.appendChild(script);
+
+    return () => {
+      document.head.removeChild(script);
+    };
   }, [city, cityName]);
 
   return (
@@ -97,4 +117,3 @@ export default function CityPage({ params }: { params: { city: string } }) {
     </div>
   );
 }
-
