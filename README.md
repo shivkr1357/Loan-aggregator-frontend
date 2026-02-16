@@ -1,6 +1,6 @@
-# Loan Aggregator Frontend
+# LoanPilot Frontend
 
-Next.js 14 + TypeScript frontend for the Loan Aggregator Platform.
+Next.js 14 + TypeScript frontend for the LoanPilot Platform.
 
 ## Setup
 

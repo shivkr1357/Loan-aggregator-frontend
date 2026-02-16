@@ -6,7 +6,7 @@ export function Footer() {
       <div className="container mx-auto px-4 py-8">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div>
-            <h3 className="text-xl font-bold mb-4">LoanAggregator</h3>
+            <h3 className="text-xl font-bold mb-4">LoanPilot</h3>
             <p className="text-gray-400 text-sm">
               Your trusted partner for finding the best personal loan rates.
             </p>
@@ -65,13 +65,13 @@ export function Footer() {
                   Contact Us
                 </Link>
               </li>
-              <li className="text-gray-400">support@loanaggregator.com</li>
+              <li className="text-gray-400">support@loanpilot.com</li>
             </ul>
           </div>
         </div>
         <div className="border-t border-navy-800 mt-8 pt-8 text-center text-sm text-gray-400">
           <p>
-            © {new Date().getFullYear()} LoanAggregator. All rights reserved.
+            © {new Date().getFullYear()} LoanPilot. All rights reserved.
           </p>
           <p className="mt-2">
             We are not a lender. We connect users with lending partners.

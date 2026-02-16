@@ -7,7 +7,7 @@ export default function ContactPage() {
         <div className="space-y-4">
           <div>
             <h3 className="font-semibold mb-2">Email</h3>
-            <p className="text-gray-700">support@loanaggregator.com</p>
+            <p className="text-gray-700">support@loanpilot.com</p>
           </div>
           <div>
             <h3 className="font-semibold mb-2">Phone</h3>

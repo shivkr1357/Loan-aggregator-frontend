@@ -7,7 +7,7 @@ import { Header } from '@/components/Header';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'Loan Aggregator - Compare Best Personal Loans',
+  title: 'LoanPilot - Compare Best Personal Loans',
   description: 'Compare and find the best personal loan rates from top lenders. Quick approval, competitive rates.',
 };
 

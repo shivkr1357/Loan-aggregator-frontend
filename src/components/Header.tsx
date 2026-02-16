@@ -6,7 +6,7 @@ export function Header() {
       <div className="container mx-auto px-4 py-4">
         <nav className="flex items-center justify-between">
           <Link href="/" className="text-2xl font-bold">
-            LoanAggregator
+            LoanPilot
           </Link>
           <div className="flex gap-6">
             <Link href="/" className="hover:text-primary-400 transition">

@@ -9,7 +9,7 @@ export default function DisclaimerPage() {
           </p>
         </div>
         <p className="text-gray-700 mb-4">
-          LoanAggregator is a loan comparison platform that connects borrowers
+          LoanPilot is a loan comparison platform that connects borrowers
           with lending partners. We do not:
         </p>
         <ul className="list-disc pl-6 space-y-2 text-gray-700 mb-4">
