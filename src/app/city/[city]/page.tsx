@@ -18,8 +18,8 @@ export default function CityPage({ params }: { params: { city: string } }) {
 
     // Add structured data for FinancialProduct
     const financialProductData = generateStructuredData('FinancialProduct', {
-      name: `Personal Loan in ${cityName}`,
-      description: `Compare and find the best personal loan rates in ${cityName}`,
+      name: `Loan in ${cityName}`,
+      description: `Compare and find the best loan rates in ${cityName}`,
       interestRate: '9.5%',
       loanTerm: '12-60 months',
       loanAmount: '50000',
@@ -42,7 +42,7 @@ export default function CityPage({ params }: { params: { city: string } }) {
         <div className="container mx-auto px-4">
           <div className="max-w-3xl mx-auto text-center">
             <h1 className="text-5xl font-bold mb-6">
-              Best Personal Loan in {cityName}
+              Best Loans in {cityName}
             </h1>
             <p className="text-xl mb-8 text-gray-300">
               Compare rates from top lenders in {cityName}. Quick approval,
@@ -63,17 +63,17 @@ export default function CityPage({ params }: { params: { city: string } }) {
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto">
             <h2 className="text-3xl font-bold mb-6">
-              Personal Loans in {cityName}
+              Loans in {cityName}
             </h2>
             <div className="prose max-w-none">
               <p className="text-lg text-gray-700 mb-4">
-                Looking for the best personal loan rates in {cityName}? You&apos;ve
-                come to the right place. Our platform helps you compare personal
+                Looking for the best loan rates in {cityName}? You&apos;ve
+                come to the right place. Our platform helps you compare
                 loan offers from top banks and NBFCs, ensuring you get the best
                 deal tailored to your needs.
               </p>
               <h3 className="text-2xl font-semibold mt-8 mb-4">
-                Why Choose Personal Loans in {cityName}?
+                Why Choose Loans in {cityName}?
               </h3>
               <ul className="list-disc pl-6 space-y-2 text-gray-700">
                 <li>
@@ -108,7 +108,7 @@ export default function CityPage({ params }: { params: { city: string } }) {
                 href={`/apply?city=${city}`}
                 className="bg-primary-600 hover:bg-primary-700 text-white px-8 py-3 rounded-lg font-semibold transition inline-block"
               >
-                Apply for Personal Loan in {cityName}
+                Apply for Loan in {cityName}
               </Link>
             </div>
           </div>

@@ -4,13 +4,18 @@ import { useState, useEffect, useCallback } from 'react';
 import { loanApi } from '@/lib/api';
 import { logEvent } from '@/lib/firebase';
 import { analyticsApi } from '@/lib/api';
+import { EMICalculator } from '@/components/EMICalculator';
 
 interface Bank {
   id: string;
+  slug?: string;
   name: string;
   minIncome: number;
-  maxInterest: number;
-  processingFee: number;
+  maxInterest?: number;
+  interestMin?: number;
+  interestMax?: number;
+  processingFee?: number;
+  processingFeePercent?: number;
   employmentTypes: string[];
   maxLoanAmount: number;
 }
@@ -24,13 +29,6 @@ export default function LoansPage() {
     maxInterest: '',
     sortBy: 'interest' as 'interest' | 'processingFee',
   });
-  const [calculation, setCalculation] = useState({
-    principal: '',
-    annualRate: '',
-    tenureMonths: '',
-    extraPayment: '',
-  });
-  const [emiResult, setEmiResult] = useState<any>(null);
 
   useEffect(() => {
     logEvent('page_view', { page: 'loans' });
@@ -42,7 +40,9 @@ export default function LoansPage() {
     try {
       setLoading(true);
       const response = await loanApi.getBanks();
-      setBanks(response.data.banks);
+      // Backend returns: { success: true, data: { banks: [...] } }
+      // axios response.data = { success: true, data: { banks: [...] } }
+      setBanks(response.data?.banks || response.banks || []);
     } catch (error) {
       console.error('Error loading banks:', error);
     } finally {
@@ -71,22 +71,6 @@ export default function LoansPage() {
     }
   }, [filters]);
 
-  const calculateEMI = async () => {
-    try {
-      const response = await loanApi.calculate({
-        principal: parseFloat(calculation.principal),
-        annualRate: parseFloat(calculation.annualRate),
-        tenureMonths: parseInt(calculation.tenureMonths),
-        extraPayment: calculation.extraPayment
-          ? parseFloat(calculation.extraPayment)
-          : undefined,
-      });
-      setEmiResult(response.data);
-    } catch (error) {
-      console.error('Error calculating EMI:', error);
-      alert('Please check your inputs');
-    }
-  };
 
   useEffect(() => {
     handleFilterChange();
@@ -95,101 +79,12 @@ export default function LoansPage() {
   return (
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-4xl font-bold mb-8 text-center">
-        Compare Personal Loans
+        Compare Loans
       </h1>
 
       {/* EMI Calculator */}
-      <div className="bg-white rounded-lg shadow-lg p-6 mb-8">
-        <h2 className="text-2xl font-semibold mb-4">EMI Calculator</h2>
-        <div className="grid md:grid-cols-4 gap-4">
-          <div>
-            <label className="block text-sm font-medium mb-2">
-              Loan Amount (₹)
-            </label>
-            <input
-              type="number"
-              value={calculation.principal}
-              onChange={(e) =>
-                setCalculation({ ...calculation, principal: e.target.value })
-              }
-              className="w-full border rounded-lg px-4 py-2"
-              placeholder="500000"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium mb-2">
-              Interest Rate (%)
-            </label>
-            <input
-              type="number"
-              value={calculation.annualRate}
-              onChange={(e) =>
-                setCalculation({ ...calculation, annualRate: e.target.value })
-              }
-              className="w-full border rounded-lg px-4 py-2"
-              placeholder="10.5"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium mb-2">
-              Tenure (Months)
-            </label>
-            <input
-              type="number"
-              value={calculation.tenureMonths}
-              onChange={(e) =>
-                setCalculation({
-                  ...calculation,
-                  tenureMonths: e.target.value,
-                })
-              }
-              className="w-full border rounded-lg px-4 py-2"
-              placeholder="60"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium mb-2">
-              Extra Payment (₹)
-            </label>
-            <input
-              type="number"
-              value={calculation.extraPayment}
-              onChange={(e) =>
-                setCalculation({
-                  ...calculation,
-                  extraPayment: e.target.value,
-                })
-              }
-              className="w-full border rounded-lg px-4 py-2"
-              placeholder="0"
-            />
-          </div>
-        </div>
-        <button
-          onClick={calculateEMI}
-          className="mt-4 bg-primary-600 text-white px-6 py-2 rounded-lg hover:bg-primary-700 transition"
-        >
-          Calculate EMI
-        </button>
-
-        {emiResult && (
-          <div className="mt-6 p-4 bg-gray-50 rounded-lg">
-            <div className="grid md:grid-cols-3 gap-4">
-              <div>
-                <p className="text-sm text-gray-600">Monthly EMI</p>
-                <p className="text-2xl font-bold">₹{emiResult.emi}</p>
-              </div>
-              <div>
-                <p className="text-sm text-gray-600">Total Interest</p>
-                <p className="text-2xl font-bold">₹{emiResult.totalInterest}</p>
-              </div>
-              <div>
-                <p className="text-sm text-gray-600">Total Amount</p>
-                <p className="text-2xl font-bold">₹{emiResult.totalAmount}</p>
-              </div>
-            </div>
-          </div>
-        )}
+      <div className="mb-12">
+        <EMICalculator />
       </div>
 
       {/* Filters */}
@@ -287,11 +182,23 @@ export default function LoansPage() {
                     <div className="grid md:grid-cols-3 gap-4 text-sm">
                       <div>
                         <span className="text-gray-600">Interest Rate: </span>
-                        <span className="font-semibold">{bank.maxInterest}%</span>
+                        <span className="font-semibold">
+                          {bank.interestMin !== undefined && bank.interestMax !== undefined
+                            ? `${bank.interestMin}% - ${bank.interestMax}%`
+                            : bank.maxInterest !== undefined
+                            ? `${bank.maxInterest}%`
+                            : 'N/A'}
+                        </span>
                       </div>
                       <div>
                         <span className="text-gray-600">Processing Fee: </span>
-                        <span className="font-semibold">₹{bank.processingFee}</span>
+                        <span className="font-semibold">
+                          {bank.processingFeePercent !== undefined
+                            ? `${bank.processingFeePercent}%`
+                            : bank.processingFee !== undefined
+                            ? `₹${bank.processingFee}`
+                            : 'N/A'}
+                        </span>
                       </div>
                       <div>
                         <span className="text-gray-600">Min Income: </span>
@@ -300,7 +207,7 @@ export default function LoansPage() {
                     </div>
                   </div>
                   <a
-                    href="/apply"
+                    href={`/apply?lenderId=${bank.id}&lenderName=${encodeURIComponent(bank.name)}`}
                     className="bg-primary-600 text-white px-6 py-2 rounded-lg hover:bg-primary-700 transition"
                   >
                     Apply Now

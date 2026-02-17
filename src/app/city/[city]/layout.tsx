@@ -10,15 +10,17 @@ export async function generateMetadata({
   const citySlug = params.city.toLowerCase();
   
   return genMeta({
-    title: `Best Personal Loan in ${cityName} - Compare Rates & Apply Online | LoanPilot`,
-    description: `Compare and find the best personal loan rates in ${cityName}. Quick approval, competitive interest rates from top banks and NBFCs. Apply online now!`,
+    title: `Best Loans in ${cityName} - Compare Rates & Apply Online | LoanPilot`,
+    description: `Compare and find the best loan rates in ${cityName}. Quick approval, competitive interest rates from top banks and NBFCs. Apply online now!`,
     keywords: [
-      `personal loan ${cityName}`,
-      `loan in ${cityName}`,
+      `loan ${cityName}`,
+      `loans in ${cityName}`,
       `best loan rates ${cityName}`,
       `instant loan ${cityName}`,
       `online loan ${cityName}`,
-      `personal loan ${cityName} interest rate`,
+      `loan ${cityName} interest rate`,
+      `personal loan ${cityName}`,
+      `business loan ${cityName}`,
     ],
     canonical: `https://loanpilot.in/city/${citySlug}`,
   });

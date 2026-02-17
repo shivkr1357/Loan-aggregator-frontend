@@ -2,7 +2,7 @@
 
 import { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { leadApi, affiliateApi } from '@/lib/api';
+import { leadApi, affiliateApi, loanApi } from '@/lib/api';
 import { logEvent } from '@/lib/firebase';
 import { analyticsApi } from '@/lib/api';
 import { z } from 'zod';
@@ -15,6 +15,8 @@ const leadSchema = z.object({
   monthlyIncome: z.number().positive('Income must be positive'),
   employmentType: z.string().min(1, 'Employment type is required'),
   loanAmount: z.number().positive('Loan amount must be positive'),
+  lenderId: z.string().min(1, 'Please select a lender'),
+  lenderName: z.string().min(1, 'Lender name is required'),
   consent: z.boolean().refine((val) => val === true, 'Consent is required'),
 });
 
@@ -29,17 +31,52 @@ function ApplyForm() {
     monthlyIncome: '',
     employmentType: '',
     loanAmount: '',
+    lenderId: '',
+    lenderName: '',
     consent: false,
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
+  const [lenders, setLenders] = useState<any[]>([]);
+  const [loadingLenders, setLoadingLenders] = useState(false);
 
   useEffect(() => {
     const cityParam = searchParams.get('city');
+    const lenderIdParam = searchParams.get('lenderId');
+    const lenderNameParam = searchParams.get('lenderName');
+    const loanAmountParam = searchParams.get('loanAmount');
+    const tenureParam = searchParams.get('tenure');
+    
     if (cityParam) {
       setFormData((prev) => ({ ...prev, city: cityParam }));
     }
+    if (lenderIdParam) {
+      setFormData((prev) => ({ ...prev, lenderId: lenderIdParam }));
+    }
+    if (lenderNameParam) {
+      setFormData((prev) => ({ ...prev, lenderName: decodeURIComponent(lenderNameParam) }));
+    }
+    if (loanAmountParam) {
+      setFormData((prev) => ({ ...prev, loanAmount: loanAmountParam }));
+    }
+    // Note: tenureParam is in months, but we don't store it in the form
   }, [searchParams]);
+
+  useEffect(() => {
+    // Load lenders for selection
+    const loadLenders = async () => {
+      try {
+        setLoadingLenders(true);
+        const response = await loanApi.getBanks();
+        setLenders(response.data.banks || []);
+      } catch (error) {
+        console.error('Error loading lenders:', error);
+      } finally {
+        setLoadingLenders(false);
+      }
+    };
+    loadLenders();
+  }, []);
 
   useEffect(() => {
     logEvent('page_view', { page: 'apply' });
@@ -76,6 +113,8 @@ function ApplyForm() {
         ...formData,
         monthlyIncome: parseFloat(formData.monthlyIncome as any),
         loanAmount: parseFloat(formData.loanAmount as any),
+        lenderId: formData.lenderId,
+        lenderName: formData.lenderName,
       });
       return true;
     } catch (error: any) {
@@ -111,6 +150,8 @@ function ApplyForm() {
         loanAmount: parseFloat(formData.loanAmount as any),
         sourcePage: window.location.pathname,
         consent: formData.consent,
+        lenderId: formData.lenderId || undefined,
+        lenderName: formData.lenderName || undefined,
       });
 
       // Track lead submission
@@ -145,7 +186,7 @@ function ApplyForm() {
   return (
     <div className="container mx-auto px-4 py-8 max-w-2xl">
       <h1 className="text-4xl font-bold mb-8 text-center">
-        Apply for Personal Loan
+        Apply for Loan
       </h1>
 
       <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow-lg p-6">
@@ -283,6 +324,51 @@ function ApplyForm() {
             />
             {errors.loanAmount && (
               <p className="text-red-500 text-sm mt-1">{errors.loanAmount}</p>
+            )}
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium mb-2">
+              Select Lender / Bank *
+            </label>
+            <select
+              name="lenderId"
+              value={formData.lenderId}
+              onChange={(e) => {
+                const selectedLender = lenders.find(l => l.id === e.target.value);
+                setFormData({
+                  ...formData,
+                  lenderId: e.target.value,
+                  lenderName: selectedLender?.name || '',
+                });
+                if (errors.lenderId) {
+                  setErrors({ ...errors, lenderId: '' });
+                }
+              }}
+              className={`w-full border rounded-lg px-4 py-2 ${
+                errors.lenderId ? 'border-red-500' : ''
+              }`}
+              disabled={loadingLenders}
+            >
+              <option value="">
+                {loadingLenders ? 'Loading lenders...' : 'Select a lender'}
+              </option>
+              {lenders.map((lender) => (
+                <option key={lender.id} value={lender.id}>
+                  {lender.name}
+                  {lender.interestMin && lender.interestMax
+                    ? ` (${lender.interestMin}% - ${lender.interestMax}%)`
+                    : ''}
+                </option>
+              ))}
+            </select>
+            {formData.lenderName && (
+              <p className="text-sm text-gray-600 mt-1">
+                Selected: <span className="font-semibold">{formData.lenderName}</span>
+              </p>
+            )}
+            {errors.lenderId && (
+              <p className="text-red-500 text-sm mt-1">{errors.lenderId}</p>
             )}
           </div>
 

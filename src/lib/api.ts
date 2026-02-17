@@ -21,6 +21,7 @@ export const loanApi = {
     minIncome?: number;
     employmentType?: string;
     maxInterest?: number;
+    loanType?: 'personal' | 'car' | 'bike' | 'home' | 'business' | 'education';
     sortBy?: 'interest' | 'processingFee';
   }) => {
     const response = await apiClient.get(apiEndpoints.loan.banks, {
@@ -41,6 +42,8 @@ export const leadApi = {
     loanAmount: number;
     sourcePage: string;
     consent: boolean;
+    lenderId?: string;
+    lenderName?: string;
   }) => {
     const response = await apiClient.post(apiEndpoints.leads.create, data);
     return response.data;

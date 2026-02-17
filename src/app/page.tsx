@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useUserAuth } from '@/contexts/UserAuthContext';
 import { logEvent } from '@/lib/firebase';
 import { analyticsApi } from '@/lib/api';
+import { EMICalculator } from '@/components/EMICalculator';
 
 export default function Home() {
   const { user } = useUserAuth();
@@ -22,7 +23,7 @@ export default function Home() {
         <div className="container mx-auto px-4">
           <div className="max-w-3xl mx-auto text-center">
             <h1 className="text-5xl font-bold mb-6">
-              Find the Best Personal Loan Rates
+              Find the Best Loan Rates
             </h1>
             <p className="text-xl mb-8 text-gray-300">
               Compare rates from top lenders. Quick approval, competitive rates,
@@ -99,6 +100,13 @@ export default function Home() {
               <span className="font-semibold">Verified Lenders</span>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* EMI Calculator Section */}
+      <section className="py-16 bg-white">
+        <div className="container mx-auto px-4">
+          <EMICalculator />
         </div>
       </section>
 
