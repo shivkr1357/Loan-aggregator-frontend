@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
+import Link from 'next/link';
 import { loanApi } from '@/lib/api';
 import { logEvent } from '@/lib/firebase';
 import { analyticsApi } from '@/lib/api';
@@ -10,6 +11,7 @@ interface Bank {
   id: string;
   slug?: string;
   name: string;
+  loanType?: string;
   minIncome: number;
   maxInterest?: number;
   interestMin?: number;
@@ -206,12 +208,22 @@ export default function LoansPage() {
                       </div>
                     </div>
                   </div>
-                  <a
-                    href={`/apply?lenderId=${bank.id}&lenderName=${encodeURIComponent(bank.name)}`}
-                    className="bg-primary-600 text-white px-6 py-2 rounded-lg hover:bg-primary-700 transition"
-                  >
-                    Apply Now
-                  </a>
+                  <div className="flex flex-col sm:flex-row gap-2">
+                    {bank.slug && (
+                      <Link
+                        href={`/bank/${bank.slug}`}
+                        className="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition text-center text-sm"
+                      >
+                        View Details
+                      </Link>
+                    )}
+                    <a
+                      href={`/apply?lenderId=${bank.id}&lenderName=${encodeURIComponent(bank.name)}`}
+                      className="bg-primary-600 text-white px-6 py-2 rounded-lg hover:bg-primary-700 transition text-center"
+                    >
+                      Apply Now
+                    </a>
+                  </div>
                 </div>
               </div>
             ))}
