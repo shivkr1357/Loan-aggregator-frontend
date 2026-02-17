@@ -9,28 +9,33 @@ import { generateMetadata as genMeta, generateStructuredData } from '@/lib/seo';
 
 const inter = Inter({ subsets: ['latin'] });
 
-export const metadata: Metadata = genMeta({
-  title: 'LoanPilot - Compare Best Personal Loans in India | Instant Approval',
-  description:
-    'Compare and find the best personal loan rates from top lenders in India. Quick approval, competitive rates (10.5% onwards), flexible repayment options. Apply online now!',
-  keywords: [
-    'personal loan',
-    'loan comparison',
-    'best loan rates India',
-    'instant loan approval',
-    'personal loan online',
-    'loan aggregator',
-    'compare loans',
-    'loan EMI calculator',
-    'quick loan',
-    'online loan application',
-    'personal loan interest rate',
-    'loan without collateral',
-    'unsecured loan',
-    'loan for salaried',
-    'loan for self employed',
-  ],
-});
+export const metadata: Metadata = {
+  ...genMeta({
+    title: 'LoanPilot - Compare Best Personal Loans in India | Instant Approval',
+    description:
+      'Compare and find the best personal loan rates from top lenders in India. Quick approval, competitive rates (10.5% onwards), flexible repayment options. Apply online now!',
+    keywords: [
+      'personal loan',
+      'loan comparison',
+      'best loan rates India',
+      'instant loan approval',
+      'personal loan online',
+      'loan aggregator',
+      'compare loans',
+      'loan EMI calculator',
+      'quick loan',
+      'online loan application',
+      'personal loan interest rate',
+      'loan without collateral',
+      'unsecured loan',
+      'loan for salaried',
+      'loan for self employed',
+    ],
+  }),
+  other: {
+    'verify-admitad': 'b37a211f6b',
+  },
+};
 
 export default function RootLayout({
   children,
@@ -44,6 +49,7 @@ export default function RootLayout({
   return (
     <html lang="en-IN">
       <head>
+        <meta name="verify-admitad" content="b37a211f6b" />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
