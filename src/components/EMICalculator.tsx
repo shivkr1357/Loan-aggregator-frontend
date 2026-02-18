@@ -321,12 +321,6 @@ export function EMICalculator() {
                   <p className="text-sm text-yellow-800 font-semibold mb-2">
                     ⚠️ No lenders found in database
                   </p>
-                  <p className="text-xs text-yellow-700">
-                    Please run the seed script to populate lenders:
-                  </p>
-                  <code className="block mt-2 text-xs bg-yellow-100 p-2 rounded">
-                    cd backend && npm run seed:lenders
-                  </code>
                 </div>
               )}
               {banks.length > 0 && !selectedBank && (

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -72,18 +72,7 @@ export default function BankPage() {
   const [expandedFAQ, setExpandedFAQ] = useState<number | null>(0);
   const [loanType, setLoanType] = useState<'personal' | 'car' | 'bike' | 'home' | 'business' | 'education'>('personal');
 
-  useEffect(() => {
-    loadBank();
-  }, [slug, loanType]);
-
-  useEffect(() => {
-    if (bank) {
-      logEvent('page_view', { page: `bank-${slug}`, bank: bank.name });
-      analyticsApi.recordVisit(`bank/${slug}`).catch(console.error);
-    }
-  }, [bank, slug]);
-
-  const loadBank = async () => {
+  const loadBank = useCallback(async () => {
     try {
       setLoading(true);
       const response = await loanApi.getBanks({ loanType });
@@ -101,7 +90,18 @@ export default function BankPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [slug, loanType]);
+
+  useEffect(() => {
+    loadBank();
+  }, [loadBank]);
+
+  useEffect(() => {
+    if (bank) {
+      logEvent('page_view', { page: `bank-${slug}`, bank: bank.name });
+      analyticsApi.recordVisit(`bank/${slug}`).catch(console.error);
+    }
+  }, [bank, slug]);
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('en-IN', {
@@ -126,7 +126,7 @@ export default function BankPage() {
       <div className="container mx-auto px-4 py-8">
         <div className="text-center py-20">
           <h1 className="text-3xl font-bold mb-4">Bank Not Found</h1>
-          <p className="text-gray-600 mb-8">The bank you're looking for doesn't exist.</p>
+          <p className="text-gray-600 mb-8">The bank you&apos;re looking for doesn&apos;t exist.</p>
           <Link href="/loans" className="text-primary-600 hover:underline">
             ← Back to Compare Loans
           </Link>
@@ -323,7 +323,7 @@ export default function BankPage() {
             <h3 className="text-xl font-semibold mb-3 text-gray-800">Late Payment Policy</h3>
             <p className="text-gray-700 mb-3">
               If you pay your EMI after the due date, interest will be charged on unpaid EMI for the number of days you are late. 
-              This interest is calculated at your loan's contracted rate and will be added to your next EMI.
+              This interest is calculated at your loan&apos;s contracted rate and will be added to your next EMI.
             </p>
             <div className="mt-3">
               <p className="font-semibold text-gray-800 mb-2">Example:</p>
@@ -414,7 +414,7 @@ export default function BankPage() {
 
         {/* Contact Section */}
         <div className="bg-navy-900 text-white rounded-lg shadow-lg p-8 text-center">
-          <h2 className="text-3xl font-bold mb-6">Here's how to reach us</h2>
+          <h2 className="text-3xl font-bold mb-6">Here&apos;s how to reach us</h2>
           <div className="flex flex-wrap justify-center gap-4 mb-8">
             <a
               href="tel:+911234567890"
