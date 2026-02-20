@@ -7,6 +7,59 @@ const apiClient = axios.create({
   },
 });
 
+const BANKS_CACHE_KEY_PREFIX = 'loan_aggregator_banks:';
+const BANKS_CACHE_TTL_MS = 10 * 60 * 1000; // 10 minutes
+
+type GetBanksFilters = {
+  minIncome?: number;
+  employmentType?: string;
+  maxInterest?: number;
+  loanType?: 'personal' | 'car' | 'bike' | 'home' | 'business' | 'education';
+  sortBy?: 'interest' | 'processingFee';
+};
+
+function getBanksCacheKey(filters?: GetBanksFilters): string {
+  if (!filters || Object.keys(filters).length === 0) {
+    return BANKS_CACHE_KEY_PREFIX + '_default';
+  }
+  const sorted = Object.keys(filters)
+    .sort()
+    .reduce((acc, k) => ({ ...acc, [k]: (filters as Record<string, unknown>)[k] }), {});
+  return BANKS_CACHE_KEY_PREFIX + JSON.stringify(sorted);
+}
+
+type GetBanksResponse = { data?: { banks: unknown[] }; banks?: unknown[] };
+
+function getBanksFromStorage(filters?: GetBanksFilters): GetBanksResponse | null {
+  if (typeof window === 'undefined') return null;
+  try {
+    const key = getBanksCacheKey(filters);
+    const raw = sessionStorage.getItem(key);
+    if (!raw) return null;
+    const { data, expires } = JSON.parse(raw) as { data: GetBanksResponse; expires: number };
+    if (Date.now() > expires) {
+      sessionStorage.removeItem(key);
+      return null;
+    }
+    return data;
+  } catch {
+    return null;
+  }
+}
+
+function setBanksInStorage(filters: GetBanksFilters | undefined, data: GetBanksResponse): void {
+  if (typeof window === 'undefined') return;
+  try {
+    const key = getBanksCacheKey(filters);
+    sessionStorage.setItem(
+      key,
+      JSON.stringify({ data, expires: Date.now() + BANKS_CACHE_TTL_MS })
+    );
+  } catch {
+    // ignore quota errors
+  }
+}
+
 export const loanApi = {
   calculate: async (data: {
     principal: number;
@@ -17,16 +70,13 @@ export const loanApi = {
     const response = await apiClient.post(apiEndpoints.loan.calculate, data);
     return response.data;
   },
-  getBanks: async (filters?: {
-    minIncome?: number;
-    employmentType?: string;
-    maxInterest?: number;
-    loanType?: 'personal' | 'car' | 'bike' | 'home' | 'business' | 'education';
-    sortBy?: 'interest' | 'processingFee';
-  }) => {
+  getBanks: async (filters?: GetBanksFilters) => {
+    const cached = getBanksFromStorage(filters);
+    if (cached != null) return cached;
     const response = await apiClient.get(apiEndpoints.loan.banks, {
       params: filters,
     });
+    setBanksInStorage(filters, response.data as GetBanksResponse);
     return response.data;
   },
 };

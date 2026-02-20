@@ -1,7 +1,8 @@
 'use client';
 
-import { useState, useEffect, useMemo, useCallback } from 'react';
+import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { loanApi } from '@/lib/api';
+import { debounce } from '@/lib/utils';
 import Link from 'next/link';
 
 interface Bank {
@@ -140,25 +141,37 @@ export function EMICalculator() {
     }
   };
 
-  const calculateEMI = useCallback(async () => {
-    if (!selectedBank || !loanAmount || !tenureYears || !interestRate) {
+  const paramsRef = useRef({ selectedBank, loanAmount, tenureYears, interestRate });
+  paramsRef.current = { selectedBank, loanAmount, tenureYears, interestRate };
+
+  const runCalculate = useCallback(() => {
+    const { selectedBank: bank, loanAmount: amt, tenureYears: yrs, interestRate: rate } = paramsRef.current;
+    if (!bank || amt === undefined || amt < 0 || !yrs || !rate) {
       setEmiResult(null);
       return;
     }
-
-    try {
-      const tenureMonths = tenureYears * 12;
-      const response = await loanApi.calculate({
-        principal: loanAmount,
-        annualRate: interestRate,
-        tenureMonths,
+    if (amt === 0) {
+      setEmiResult({
+        emi: 0,
+        totalAmount: 0,
+        totalInterest: 0,
       });
-      setEmiResult(response.data);
-    } catch (error) {
-      console.error('Error calculating EMI:', error);
-      setEmiResult(null);
+      return;
     }
-  }, [selectedBank, loanAmount, tenureYears, interestRate]);
+    const tenureMonths = yrs * 12;
+    loanApi
+      .calculate({ principal: amt, annualRate: rate, tenureMonths })
+      .then((res) => setEmiResult(res.data))
+      .catch((err) => {
+        console.error('Error calculating EMI:', err);
+        setEmiResult(null);
+      });
+  }, []);
+
+  const debouncedCalculate = useMemo(
+    () => debounce(runCalculate, 400),
+    [runCalculate]
+  );
 
   useEffect(() => {
     loadBanks();
@@ -171,8 +184,8 @@ export function EMICalculator() {
   }, [selectedBank]);
 
   useEffect(() => {
-    calculateEMI();
-  }, [calculateEMI]);
+    debouncedCalculate();
+  }, [selectedBank, loanAmount, tenureYears, interestRate, debouncedCalculate]);
 
   const colors = useMemo(() => {
     if (selectedBank && bankColors[selectedBank.name]) {
@@ -336,26 +349,36 @@ export function EMICalculator() {
                 <label className="block text-sm font-semibold text-gray-700">
                   Loan Amount
                 </label>
-                <input
-                  type="text"
-                  value={formatCurrency(loanAmount)}
-                  onChange={(e) => {
-                    const value = parseInt(
-                      e.target.value.replace(/[₹,\s]/g, '')
-                    );
-                    if (!isNaN(value)) {
-                      setLoanAmount(
-                        Math.max(minLoanAmount, Math.min(maxLoanAmount, value))
-                      );
-                    }
-                  }}
-                  className="w-32 text-right font-bold text-lg border-2 rounded px-2 py-1"
-                  style={{ borderColor: colors.primary }}
-                />
+                <div className="flex items-center gap-2">
+                  <span className="text-gray-500">₹</span>
+                  <input
+                    type="number"
+                    min="0"
+                    step="1000"
+                    value={loanAmount}
+                    onChange={(e) => {
+                      const value = parseInt(e.target.value) || 0;
+                      if (value >= 0) {
+                        setLoanAmount(Math.min(maxLoanAmount, value));
+                      }
+                    }}
+                    onBlur={(e) => {
+                      const value = parseInt(e.target.value) || 0;
+                      if (value < minLoanAmount && value > 0) {
+                        setLoanAmount(minLoanAmount);
+                      } else if (value === 0) {
+                        setLoanAmount(0);
+                      }
+                    }}
+                    className="w-32 text-right font-bold text-lg border-2 rounded px-2 py-1"
+                    style={{ borderColor: colors.primary }}
+                    placeholder="0"
+                  />
+                </div>
               </div>
               <input
                 type="range"
-                min={minLoanAmount}
+                min="0"
                 max={maxLoanAmount}
                 step={25000}
                 value={loanAmount}
@@ -363,18 +386,21 @@ export function EMICalculator() {
                 className="w-full h-2 rounded-lg appearance-none cursor-pointer"
                 style={{
                   background: `linear-gradient(to right, ${colors.primary} 0%, ${colors.primary} ${
-                    ((loanAmount - minLoanAmount) / (maxLoanAmount - minLoanAmount)) *
-                    100
+                    (loanAmount / maxLoanAmount) * 100
                   }%, #e5e7eb ${
-                    ((loanAmount - minLoanAmount) / (maxLoanAmount - minLoanAmount)) *
-                    100
+                    (loanAmount / maxLoanAmount) * 100
                   }%, #e5e7eb 100%)`,
                 }}
               />
               <div className="flex justify-between text-xs text-gray-500 mt-1">
-                <span>{formatCurrency(minLoanAmount)}</span>
+                <span>₹0</span>
                 <span>{formatCurrency(maxLoanAmount)}</span>
               </div>
+              {loanAmount > 0 && loanAmount < minLoanAmount && (
+                <p className="text-xs text-orange-600 mt-1">
+                  Minimum recommended: {formatCurrency(minLoanAmount)}
+                </p>
+              )}
             </div>
 
             {/* Loan Tenure Slider */}

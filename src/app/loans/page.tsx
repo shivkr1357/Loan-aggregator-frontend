@@ -1,10 +1,11 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import Link from 'next/link';
 import { loanApi } from '@/lib/api';
 import { logEvent } from '@/lib/firebase';
 import { analyticsApi } from '@/lib/api';
+import { debounce } from '@/lib/utils';
 import { EMICalculator } from '@/components/EMICalculator';
 
 interface Bank {
@@ -29,54 +30,48 @@ export default function LoansPage() {
     minIncome: '',
     employmentType: '',
     maxInterest: '',
+    minLoanAmount: '',
+    maxLoanAmount: '',
     sortBy: 'interest' as 'interest' | 'processingFee',
   });
 
-  useEffect(() => {
-    logEvent('page_view', { page: 'loans' });
-    analyticsApi.recordVisit('loans').catch(console.error);
-    loadBanks();
-  }, []);
+  const filtersRef = useRef(filters);
+  filtersRef.current = filters;
 
-  const loadBanks = async () => {
+  const fetchBanksWithFilters = useCallback(async () => {
+    const f = filtersRef.current;
     try {
       setLoading(true);
-      const response = await loanApi.getBanks();
-      // Backend returns: { success: true, data: { banks: [...] } }
-      // axios response.data = { success: true, data: { banks: [...] } }
-      setBanks(response.data?.banks || response.banks || []);
+      const filterParams: Record<string, string | number> = {};
+      if (f.minIncome) filterParams.minIncome = parseFloat(f.minIncome);
+      if (f.employmentType) filterParams.employmentType = f.employmentType;
+      if (f.maxInterest) filterParams.maxInterest = parseFloat(f.maxInterest);
+      if (f.minLoanAmount) filterParams.minLoanAmount = parseFloat(f.minLoanAmount);
+      if (f.maxLoanAmount) filterParams.maxLoanAmount = parseFloat(f.maxLoanAmount);
+      if (f.sortBy) filterParams.sortBy = f.sortBy;
+
+      const response = await loanApi.getBanks(filterParams);
+      setBanks(response.data?.banks ?? response.banks ?? []);
     } catch (error) {
       console.error('Error loading banks:', error);
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
-  const handleFilterChange = useCallback(async () => {
-    try {
-      setLoading(true);
-      const filterParams: any = {};
-      if (filters.minIncome)
-        filterParams.minIncome = parseFloat(filters.minIncome);
-      if (filters.employmentType)
-        filterParams.employmentType = filters.employmentType;
-      if (filters.maxInterest)
-        filterParams.maxInterest = parseFloat(filters.maxInterest);
-      if (filters.sortBy) filterParams.sortBy = filters.sortBy;
-
-      const response = await loanApi.getBanks(filterParams);
-      setBanks(response.data.banks);
-    } catch (error) {
-      console.error('Error filtering banks:', error);
-    } finally {
-      setLoading(false);
-    }
-  }, [filters]);
-
+  const debouncedFetchBanks = useMemo(
+    () => debounce(fetchBanksWithFilters, 400),
+    [fetchBanksWithFilters]
+  );
 
   useEffect(() => {
-    handleFilterChange();
-  }, [handleFilterChange]);
+    logEvent('page_view', { page: 'loans' });
+    analyticsApi.recordVisit('loans').catch(console.error);
+  }, []);
+
+  useEffect(() => {
+    debouncedFetchBanks();
+  }, [filters, debouncedFetchBanks]);
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -92,7 +87,7 @@ export default function LoansPage() {
       {/* Filters */}
       <div className="bg-white rounded-lg shadow-lg p-6 mb-8">
         <h2 className="text-2xl font-semibold mb-4">Filter Banks</h2>
-        <div className="grid md:grid-cols-4 gap-4">
+        <div className="grid md:grid-cols-3 lg:grid-cols-6 gap-4">
           <div>
             <label className="block text-sm font-medium mb-2">
               Min Income (₹)
@@ -129,12 +124,41 @@ export default function LoansPage() {
             </label>
             <input
               type="number"
+              step="0.1"
               value={filters.maxInterest}
               onChange={(e) =>
                 setFilters({ ...filters, maxInterest: e.target.value })
               }
               className="w-full border rounded-lg px-4 py-2"
               placeholder="11.0"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium mb-2">
+              Min Loan Amount (₹)
+            </label>
+            <input
+              type="number"
+              value={filters.minLoanAmount}
+              onChange={(e) =>
+                setFilters({ ...filters, minLoanAmount: e.target.value })
+              }
+              className="w-full border rounded-lg px-4 py-2"
+              placeholder="50000"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium mb-2">
+              Max Loan Amount (₹)
+            </label>
+            <input
+              type="number"
+              value={filters.maxLoanAmount}
+              onChange={(e) =>
+                setFilters({ ...filters, maxLoanAmount: e.target.value })
+              }
+              className="w-full border rounded-lg px-4 py-2"
+              placeholder="5000000"
             />
           </div>
           <div>
@@ -155,7 +179,7 @@ export default function LoansPage() {
           </div>
         </div>
         <button
-          onClick={handleFilterChange}
+          onClick={fetchBanksWithFilters}
           className="mt-4 bg-primary-600 text-white px-6 py-2 rounded-lg hover:bg-primary-700 transition"
         >
           Apply Filters

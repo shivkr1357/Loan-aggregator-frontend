@@ -31,7 +31,11 @@ export function generateMetadata({
   type = 'website',
 }: SEOProps = {}): Metadata {
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://loanpilot.in';
-  const canonicalUrl = canonical || baseUrl;
+  // Ensure canonical URL has no trailing slash (except root)
+  let canonicalUrl = canonical || baseUrl;
+  if (canonicalUrl !== baseUrl && canonicalUrl.endsWith('/')) {
+    canonicalUrl = canonicalUrl.slice(0, -1);
+  }
 
   return {
     title,

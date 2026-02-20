@@ -1,9 +1,44 @@
 import { MetadataRoute } from 'next';
 
-export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://loanpilot.in';
+const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://loanpilot.in';
 
-  // Common Indian cities for dynamic city pages
+export default function sitemap(): MetadataRoute.Sitemap {
+  // Static pages
+  const staticPages = [
+    '',
+    '/loans',
+    '/apply',
+    '/disclaimer',
+    '/terms',
+    '/privacy',
+    '/contact',
+    '/support',
+  ].map((path) => ({
+    url: `${baseUrl}${path}`,
+    lastModified: new Date(),
+    changeFrequency: 'weekly' as const,
+    priority: path === '' ? 1.0 : 0.8,
+  }));
+
+  // Dynamic pages - you can fetch these from your API/database
+  // For now, we'll include common bank slugs
+  const bankSlugs = [
+    'hdfc-bank-personal',
+    'icici-bank-personal',
+    'axis-bank-personal',
+    'kotak-mahindra-bank-personal',
+    'idfc-first-bank-personal',
+    'bajaj-finserv-personal',
+  ];
+
+  const bankPages = bankSlugs.map((slug) => ({
+    url: `${baseUrl}/bank/${slug}`,
+    lastModified: new Date(),
+    changeFrequency: 'weekly' as const,
+    priority: 0.7,
+  }));
+
+  // City pages - common cities
   const cities = [
     'delhi',
     'mumbai',
@@ -12,80 +47,14 @@ export default function sitemap(): MetadataRoute.Sitemap {
     'chennai',
     'kolkata',
     'pune',
-    'ahmedabad',
-    'jaipur',
-    'surat',
-    'lucknow',
-    'kanpur',
-    'nagpur',
-    'indore',
-    'thane',
-    'bhopal',
-    'visakhapatnam',
-    'patna',
-    'vadodara',
-    'ghaziabad',
   ];
 
-  // Static pages
-  const staticPages = [
-    {
-      url: baseUrl,
-      lastModified: new Date(),
-      changeFrequency: 'daily' as const,
-      priority: 1.0,
-    },
-    {
-      url: `${baseUrl}/loans`,
-      lastModified: new Date(),
-      changeFrequency: 'daily' as const,
-      priority: 0.9,
-    },
-    {
-      url: `${baseUrl}/apply`,
-      lastModified: new Date(),
-      changeFrequency: 'weekly' as const,
-      priority: 0.8,
-    },
-    {
-      url: `${baseUrl}/privacy`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly' as const,
-      priority: 0.3,
-    },
-    {
-      url: `${baseUrl}/terms`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly' as const,
-      priority: 0.3,
-    },
-    {
-      url: `${baseUrl}/disclaimer`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly' as const,
-      priority: 0.3,
-    },
-    {
-      url: `${baseUrl}/contact`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly' as const,
-      priority: 0.5,
-    },
-    {
-      url: `${baseUrl}/support`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly' as const,
-      priority: 0.6,
-    },
-  ];
-
-  // City pages
   const cityPages = cities.map((city) => ({
     url: `${baseUrl}/city/${city}`,
     lastModified: new Date(),
     changeFrequency: 'weekly' as const,
-    priority: 0.7,
+    priority: 0.6,
   }));
 
-  return [...staticPages, ...cityPages];
+  return [...staticPages, ...bankPages, ...cityPages];
 }

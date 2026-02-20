@@ -9,6 +9,7 @@ import { generateMetadata as genMeta, generateStructuredData } from '@/lib/seo';
 
 const inter = Inter({ subsets: ['latin'] });
 
+// Default metadata for pages without their own metadata
 export const metadata: Metadata = {
   ...genMeta({
     title: 'LoanPilot - Compare Best Loans in India | Instant Approval',
@@ -34,6 +35,7 @@ export const metadata: Metadata = {
       'business loan',
       'home loan',
     ],
+    canonical: 'https://loanpilot.in',
   }),
   other: {
     'verify-admitad': 'b37a211f6b',

@@ -3,7 +3,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
-import Image from 'next/image';
 import { loanApi } from '@/lib/api';
 import { logEvent } from '@/lib/firebase';
 import { analyticsApi } from '@/lib/api';
@@ -63,6 +62,69 @@ const defaultFAQs: FAQ[] = [
     answer: 'The interest on a ₹1 lakh loan depends on the interest rate and loan tenure. For example, at 12% annual interest rate for 5 years, the total interest would be approximately ₹32,000-₹33,000. Use our EMI calculator to get an accurate estimate based on your specific loan terms.',
   },
 ];
+
+// Remote logo fallback when /banks/{baseSlug}.png is missing (add your files to public/banks/ per README)
+const REMOTE_LOGO_FALLBACK: Record<string, string> = {
+  'hdfc-bank': 'https://logos.hunter.io/hdfcbank.com',
+  'icici-bank': 'https://logos.hunter.io/icicibank.com',
+  'axis-bank': 'https://logos.hunter.io/axisbank.com',
+  'kotak-mahindra-bank': 'https://logos.hunter.io/kotak.com',
+  'idfc-first-bank': 'https://logos.hunter.io/idfcfirstbank.com',
+  'bajaj-finserv': 'https://logos.hunter.io/bajajfinserv.in',
+};
+
+// Try local /banks/{baseSlug}.png first, then fallbackUrl (API), then remote fallback, then initials
+function BankLogo({
+  slug,
+  name,
+  fallbackUrl,
+}: {
+  slug?: string;
+  name: string;
+  fallbackUrl?: string;
+}) {
+  const baseSlug = slug ? slug.replace(/-?(personal|car|bike|home|business|education)$/, '') || slug : '';
+  const localSrc = baseSlug ? `/banks/${baseSlug}.png` : null;
+  const remoteFallback = baseSlug ? REMOTE_LOGO_FALLBACK[baseSlug] : null;
+  const [state, setState] = useState<'local' | 'remote' | 'placeholder'>(
+    localSrc ? 'local' : fallbackUrl?.startsWith('http') ? 'remote' : remoteFallback ? 'remote' : 'placeholder'
+  );
+
+  const showPlaceholder = () => (
+    <div
+      className="flex items-center justify-center rounded-lg bg-gray-100 text-gray-600 font-semibold text-lg"
+      style={{ width: 120, height: 60 }}
+      title={name}
+    >
+      {name.split(' ')[0]?.slice(0, 2) ?? '—'}
+    </div>
+  );
+
+  if (state === 'placeholder') return showPlaceholder();
+
+  const src =
+    state === 'local' && localSrc
+      ? localSrc
+      : state === 'remote'
+        ? (fallbackUrl?.startsWith('http') ? fallbackUrl : remoteFallback ?? fallbackUrl ?? null)
+        : null;
+  if (!src) return showPlaceholder();
+
+  return (
+    <img
+      src={src}
+      alt={name}
+      width={120}
+      height={60}
+      className="object-contain"
+      style={{ maxWidth: 120, maxHeight: 60 }}
+      onError={() => {
+        if (state === 'local') setState('remote');
+        else setState('placeholder');
+      }}
+    />
+  );
+}
 
 export default function BankPage() {
   const params = useParams();
@@ -174,15 +236,7 @@ export default function BankPage() {
         {/* Bank Header */}
         <div className="bg-white rounded-lg shadow-lg p-6 mb-6">
           <div className="flex items-center gap-4 mb-4">
-            {bank.logoUrl && (
-              <Image
-                src={bank.logoUrl}
-                alt={bank.name}
-                width={120}
-                height={60}
-                className="object-contain"
-              />
-            )}
+            <BankLogo slug={bank.slug} name={bank.name} fallbackUrl={bank.logoUrl} />
             <div>
               <h1 className="text-4xl font-bold text-gray-800">
                 {bank.name} {loanTypeLabels[loanType]} Interest Rates

@@ -3,6 +3,11 @@ const nextConfig = {
   reactStrictMode: true,
   images: {
     formats: ['image/avif', 'image/webp'],
+    domains: ['logos-world.net', 'logos.hunter.io'],
+    remotePatterns: [
+      { protocol: 'https', hostname: 'logos-world.net', pathname: '/**' },
+      { protocol: 'https', hostname: 'logos.hunter.io', pathname: '/**' },
+    ],
   },
   serverComponentsExternalPackages: ['undici'],
   webpack: (config, { isServer }) => {
