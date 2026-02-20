@@ -14,6 +14,9 @@ type GetBanksFilters = {
   minIncome?: number;
   employmentType?: string;
   maxInterest?: number;
+  city?: string;
+  minLoanAmount?: number;
+  maxLoanAmount?: number;
   loanType?: 'personal' | 'car' | 'bike' | 'home' | 'business' | 'education';
   sortBy?: 'interest' | 'processingFee';
 };

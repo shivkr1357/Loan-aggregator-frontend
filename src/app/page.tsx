@@ -6,6 +6,7 @@ import { useUserAuth } from '@/contexts/UserAuthContext';
 import { logEvent } from '@/lib/firebase';
 import { analyticsApi } from '@/lib/api';
 import { EMICalculator } from '@/components/EMICalculator';
+import { EligibilityChecker } from '@/components/EligibilityChecker';
 
 export default function Home() {
   const { user } = useUserAuth();
@@ -21,34 +22,60 @@ export default function Home() {
       {/* Hero Section */}
       <section className="bg-gradient-to-br from-navy-900 to-navy-800 text-white py-20">
         <div className="container mx-auto px-4">
-          <div className="max-w-3xl mx-auto text-center">
-            <h1 className="text-5xl font-bold mb-6">
-              Find the Best Loan Rates
+          <div className="max-w-4xl mx-auto text-center">
+            <div className="inline-block bg-green-500/20 border border-green-400/30 rounded-full px-4 py-2 mb-6">
+              <span className="text-green-300 font-semibold">⚡ Loans from ₹2,000 to ₹50 Lakhs • Approval in 2 Minutes</span>
+            </div>
+            <h1 className="text-5xl md:text-6xl font-bold mb-6">
+              Compare 20+ Lenders
+              <br />
+              <span className="text-primary-400">Find Your Best Loan Rate</span>
             </h1>
             <p className="text-xl mb-8 text-gray-300">
-              Compare rates from top lenders. Quick approval, competitive rates,
-              and flexible repayment options.
+              Compare rates from top banks and NBFCs. Quick approval, competitive rates (10.5% onwards),
+              and flexible repayment options. <strong>No hidden charges.</strong>
             </p>
-            <div className="flex gap-4 justify-center">
+            <div className="flex flex-wrap gap-4 justify-center mb-8">
               <Link
                 href="/loans"
-                className="bg-primary-600 hover:bg-primary-700 text-white px-8 py-3 rounded-lg font-semibold transition"
+                className="bg-primary-600 hover:bg-primary-700 text-white px-8 py-3 rounded-lg font-semibold transition text-lg"
               >
-                Compare Loans
+                Compare Loans →
               </Link>
               <Link
                 href="/apply"
-                className="bg-white text-navy-900 hover:bg-gray-100 px-8 py-3 rounded-lg font-semibold transition"
+                className="bg-white text-navy-900 hover:bg-gray-100 px-8 py-3 rounded-lg font-semibold transition text-lg"
               >
                 Apply Now
               </Link>
+            </div>
+            <div className="flex flex-wrap justify-center gap-6 text-sm text-gray-300">
+              <div className="flex items-center gap-2">
+                <span>✓</span>
+                <span>Free Comparison</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span>✓</span>
+                <span>No Impact on Credit Score</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span>✓</span>
+                <span>Instant Results</span>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
+      {/* Eligibility Checker - Your #1 Hook */}
+      <section className="py-16 bg-gray-50">
+        <div className="container mx-auto px-4">
+          <EligibilityChecker />
+        </div>
+      </section>
+
       {/* Trust Badges */}
-      <section className="py-12 bg-white">
+      <section className="py-12 bg-white border-b">
         <div className="container mx-auto px-4">
           <div className="flex flex-wrap justify-center items-center gap-8">
             <div className="flex items-center gap-2">
@@ -99,6 +126,51 @@ export default function Home() {
               </svg>
               <span className="font-semibold">Verified Lenders</span>
             </div>
+            <div className="flex items-center gap-2">
+              <svg
+                className="w-8 h-8 text-orange-600"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+              </svg>
+              <span className="font-semibold">We Do Not Charge Users</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <svg
+                className="w-8 h-8 text-red-600"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
+                />
+              </svg>
+              <span className="font-semibold">RBI Registered Partners</span>
+            </div>
+          </div>
+          <div className="mt-6 text-center">
+            <p className="text-sm text-gray-600">
+              <Link href="/disclaimer" className="text-primary-600 hover:underline">
+                Disclaimer
+              </Link>
+              {' • '}
+              <Link href="/privacy" className="text-primary-600 hover:underline">
+                Privacy Policy
+              </Link>
+              {' • '}
+              LoanPilot is a loan aggregator platform. We are not a lender.
+            </p>
           </div>
         </div>
       </section>

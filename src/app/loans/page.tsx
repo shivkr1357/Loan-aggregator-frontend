@@ -7,11 +7,13 @@ import { logEvent } from '@/lib/firebase';
 import { analyticsApi } from '@/lib/api';
 import { debounce } from '@/lib/utils';
 import { EMICalculator } from '@/components/EMICalculator';
+import { LoanComparisonTable } from '@/components/LoanComparisonTable';
 
 interface Bank {
   id: string;
   slug?: string;
   name: string;
+  logoUrl?: string;
   loanType?: string;
   minIncome: number;
   maxInterest?: number;
@@ -19,13 +21,18 @@ interface Bank {
   interestMax?: number;
   processingFee?: number;
   processingFeePercent?: number;
+  processingFeeFixed?: number;
   employmentTypes: string[];
+  minLoanAmount: number;
   maxLoanAmount: number;
+  estimatedApprovalTimeDays?: number;
+  rating?: number;
 }
 
 export default function LoansPage() {
   const [banks, setBanks] = useState<Bank[]>([]);
   const [loading, setLoading] = useState(true);
+  const [viewMode, setViewMode] = useState<'table' | 'list'>('table');
   const [filters, setFilters] = useState({
     minIncome: '',
     employmentType: '',
@@ -188,13 +195,39 @@ export default function LoansPage() {
 
       {/* Banks List */}
       <div className="bg-white rounded-lg shadow-lg p-6">
-        <h2 className="text-2xl font-semibold mb-4">Available Lenders</h2>
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-2xl font-semibold">Available Lenders</h2>
+          <div className="flex gap-2 border rounded-lg p-1">
+            <button
+              onClick={() => setViewMode('table')}
+              className={`px-4 py-2 rounded text-sm font-medium transition ${
+                viewMode === 'table'
+                  ? 'bg-primary-600 text-white'
+                  : 'bg-transparent text-gray-600 hover:bg-gray-100'
+              }`}
+            >
+              Table View
+            </button>
+            <button
+              onClick={() => setViewMode('list')}
+              className={`px-4 py-2 rounded text-sm font-medium transition ${
+                viewMode === 'list'
+                  ? 'bg-primary-600 text-white'
+                  : 'bg-transparent text-gray-600 hover:bg-gray-100'
+              }`}
+            >
+              List View
+            </button>
+          </div>
+        </div>
         {loading ? (
           <p className="text-center py-8">Loading...</p>
         ) : banks.length === 0 ? (
           <p className="text-center py-8 text-gray-500">
             No banks found matching your criteria
           </p>
+        ) : viewMode === 'table' ? (
+          <LoanComparisonTable banks={banks} />
         ) : (
           <div className="space-y-4">
             {banks.map((bank) => (
