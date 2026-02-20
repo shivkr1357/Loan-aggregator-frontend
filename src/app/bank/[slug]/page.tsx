@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 import { loanApi } from '@/lib/api';
 import { logEvent } from '@/lib/firebase';
 import { analyticsApi } from '@/lib/api';
@@ -110,19 +111,40 @@ function BankLogo({
         : null;
   if (!src) return showPlaceholder();
 
+  // Use Next.js Image for local images, regular img for external (with error handling)
+  const isExternal = src.startsWith('http');
+  
+  if (isExternal) {
+    // For external images, use regular img with error handling
+    // eslint-disable-next-line @next/next/no-img-element
+    return (
+      <img
+        src={src}
+        alt={name}
+        width={120}
+        height={60}
+        className="object-contain"
+        style={{ maxWidth: 120, maxHeight: 60 }}
+        onError={() => {
+          if (state === 'local') setState('remote');
+          else setState('placeholder');
+        }}
+      />
+    );
+  }
+
+  // For local images, use Next.js Image component
+  // Note: Next.js Image doesn't support onError, so errors are handled via state fallback
   return (
-    <img
-      src={src}
-      alt={name}
-      width={120}
-      height={60}
-      className="object-contain"
-      style={{ maxWidth: 120, maxHeight: 60 }}
-      onError={() => {
-        if (state === 'local') setState('remote');
-        else setState('placeholder');
-      }}
-    />
+    <div style={{ width: 120, height: 60, position: 'relative' }}>
+      <Image
+        src={src}
+        alt={name}
+        fill
+        className="object-contain"
+        sizes="120px"
+      />
+    </div>
   );
 }
 

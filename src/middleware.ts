@@ -1,29 +1,36 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
+// Set to false to disable middleware if experiencing redirect loops
+// Temporarily disabled to fix ERR_TOO_MANY_REDIRECTS - re-enable after verifying Vercel redirects
+const ENABLE_MIDDLEWARE = false;
+
 export function middleware(request: NextRequest) {
-  const url = request.nextUrl.clone();
-  const pathname = url.pathname;
-  const hostname = request.headers.get('host') || '';
+  // Temporarily disable if experiencing redirect loops
+  if (!ENABLE_MIDDLEWARE) {
+    return NextResponse.next();
+  }
 
-  // 1. Normalize www (redirect www to non-www)
-  // This prevents duplicate content issues
-  const preferredDomain = process.env.NEXT_PUBLIC_DOMAIN || 'loanpilot.in';
+  const pathname = request.nextUrl.pathname;
+
+  // Only remove trailing slash (except root) to prevent duplicate content
+  // IMPORTANT: Vercel handles www→non-www and HTTP→HTTPS automatically
+  // Do NOT add those redirects here to avoid conflicts
   
-  if (hostname.startsWith('www.')) {
-    url.hostname = preferredDomain;
-    return NextResponse.redirect(url, 301);
+  // Skip if already a redirect or API route
+  if (pathname.startsWith('/api') || pathname.startsWith('/_next')) {
+    return NextResponse.next();
   }
 
-  // 2. Remove trailing slash (except for root)
-  // This ensures consistent URLs and prevents duplicate content
+  // Remove trailing slash (except root)
   if (pathname !== '/' && pathname.endsWith('/')) {
+    const url = request.nextUrl.clone();
     url.pathname = pathname.slice(0, -1);
+    // Preserve query parameters and hash
+    url.search = request.nextUrl.search;
+    url.hash = request.nextUrl.hash;
     return NextResponse.redirect(url, 301);
   }
-
-  // Note: HTTPS redirect is typically handled by your hosting provider (Vercel, etc.)
-  // Query parameters are preserved as they're needed for filtering/search functionality
 
   return NextResponse.next();
 }

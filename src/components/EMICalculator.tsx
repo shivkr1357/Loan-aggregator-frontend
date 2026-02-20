@@ -96,7 +96,7 @@ export function EMICalculator() {
   const [interestRate, setInterestRate] = useState(9.99);
   const [emiResult, setEmiResult] = useState<any>(null);
 
-  const loadBanks = async () => {
+  const loadBanks = useCallback(async () => {
     try {
       setLoading(true);
       const response = await loanApi.getBanks({ loanType });
@@ -139,7 +139,7 @@ export function EMICalculator() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [loanType]);
 
   const paramsRef = useRef({ selectedBank, loanAmount, tenureYears, interestRate });
   paramsRef.current = { selectedBank, loanAmount, tenureYears, interestRate };
@@ -175,7 +175,7 @@ export function EMICalculator() {
 
   useEffect(() => {
     loadBanks();
-  }, [loanType]);
+  }, [loadBanks]);
 
   useEffect(() => {
     if (selectedBank && selectedBank.interestMin) {

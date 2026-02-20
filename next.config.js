@@ -9,7 +9,6 @@ const nextConfig = {
       { protocol: 'https', hostname: 'logos.hunter.io', pathname: '/**' },
     ],
   },
-  serverComponentsExternalPackages: ['undici'],
   webpack: (config, { isServer }) => {
     // Ignore Node.js built-in modules
     config.resolve.fallback = {
