@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
+import { useState, useEffect, useCallback, useRef, useMemo, Suspense } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { loanApi } from '@/lib/api';
@@ -30,7 +30,7 @@ interface Bank {
   rating?: number;
 }
 
-export default function LoansPage() {
+function LoansPageContent() {
   const searchParams = useSearchParams();
   const [banks, setBanks] = useState<Bank[]>([]);
   const [loading, setLoading] = useState(true);
@@ -322,5 +322,26 @@ export default function LoansPage() {
         )}
       </div>
     </div>
+  );
+}
+
+function LoansPageFallback() {
+  return (
+    <div className="container mx-auto px-4 py-8">
+      <h1 className="text-4xl font-bold mb-8 text-center">Compare Loans</h1>
+      <div className="animate-pulse space-y-6">
+        <div className="h-48 bg-gray-200 rounded-lg" />
+        <div className="h-32 bg-gray-200 rounded-lg" />
+        <div className="h-64 bg-gray-200 rounded-lg" />
+      </div>
+    </div>
+  );
+}
+
+export default function LoansPage() {
+  return (
+    <Suspense fallback={<LoansPageFallback />}>
+      <LoansPageContent />
+    </Suspense>
   );
 }
