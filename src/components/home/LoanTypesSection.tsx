@@ -47,7 +47,7 @@ export function LoanTypesSection() {
           All Types of Loans Available
         </h2>
         <p className="text-center text-gray-600 mb-12 max-w-2xl mx-auto">
-          Whether you need funds for personal use, buying a vehicle, home, business, or education, we've got you covered.
+          Whether you need funds for personal use, buying a vehicle, home, business, or education, we&apos;ve got you covered.
         </p>
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           {loanTypes.map((loan) => (

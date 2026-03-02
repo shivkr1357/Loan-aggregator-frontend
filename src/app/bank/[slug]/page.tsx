@@ -115,21 +115,17 @@ function BankLogo({
   const isExternal = src.startsWith('http');
   
   if (isExternal) {
-    // For external images, use regular img with error handling
-    // eslint-disable-next-line @next/next/no-img-element
     return (
-      <img
-        src={src}
-        alt={name}
-        width={120}
-        height={60}
-        className="object-contain"
-        style={{ maxWidth: 120, maxHeight: 60 }}
-        onError={() => {
-          if (state === 'local') setState('remote');
-          else setState('placeholder');
-        }}
-      />
+      <>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <Image
+          src={src}
+          alt={name}
+          fill
+          className="object-contain"
+          sizes="120px"
+        />
+      </>
     );
   }
 
