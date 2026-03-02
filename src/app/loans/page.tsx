@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
 import { loanApi } from '@/lib/api';
 import { logEvent } from '@/lib/firebase';
 import { analyticsApi } from '@/lib/api';
@@ -30,15 +31,18 @@ interface Bank {
 }
 
 export default function LoansPage() {
+  const searchParams = useSearchParams();
   const [banks, setBanks] = useState<Bank[]>([]);
   const [loading, setLoading] = useState(true);
   const [viewMode, setViewMode] = useState<'table' | 'list'>('table');
   const [filters, setFilters] = useState({
-    minIncome: '',
-    employmentType: '',
+    minIncome: searchParams.get('minIncome') ?? '',
+    employmentType: searchParams.get('employmentType') ?? '',
+    city: searchParams.get('city') ?? '',
     maxInterest: '',
-    minLoanAmount: '',
-    maxLoanAmount: '',
+    minLoanAmount: searchParams.get('minLoanAmount') ?? '',
+    maxLoanAmount: searchParams.get('maxLoanAmount') ?? '',
+    loanType: searchParams.get('loanType') ?? '',
     sortBy: 'interest' as 'interest' | 'processingFee',
   });
 
@@ -52,6 +56,8 @@ export default function LoansPage() {
       const filterParams: Record<string, string | number> = {};
       if (f.minIncome) filterParams.minIncome = parseFloat(f.minIncome);
       if (f.employmentType) filterParams.employmentType = f.employmentType;
+      if (f.city) filterParams.city = f.city;
+      if (f.loanType) filterParams.loanType = f.loanType;
       if (f.maxInterest) filterParams.maxInterest = parseFloat(f.maxInterest);
       if (f.minLoanAmount) filterParams.minLoanAmount = parseFloat(f.minLoanAmount);
       if (f.maxLoanAmount) filterParams.maxLoanAmount = parseFloat(f.maxLoanAmount);
@@ -123,6 +129,34 @@ export default function LoansPage() {
               <option value="">All</option>
               <option value="salaried">Salaried</option>
               <option value="self-employed">Self-Employed</option>
+            </select>
+          </div>
+          <div>
+            <label className="block text-sm font-medium mb-2">City</label>
+            <input
+              type="text"
+              value={filters.city}
+              onChange={(e) => setFilters({ ...filters, city: e.target.value })}
+              className="w-full border rounded-lg px-4 py-2"
+              placeholder="e.g. Delhi"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium mb-2">Loan Type</label>
+            <select
+              value={filters.loanType}
+              onChange={(e) =>
+                setFilters({ ...filters, loanType: e.target.value })
+              }
+              className="w-full border rounded-lg px-4 py-2"
+            >
+              <option value="">All</option>
+              <option value="personal">Personal</option>
+              <option value="home">Home</option>
+              <option value="car">Car</option>
+              <option value="bike">Bike</option>
+              <option value="business">Business</option>
+              <option value="education">Education</option>
             </select>
           </div>
           <div>

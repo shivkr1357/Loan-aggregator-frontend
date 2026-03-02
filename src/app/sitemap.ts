@@ -2,6 +2,41 @@ import { MetadataRoute } from 'next';
 
 const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://loanpilot.in';
 
+// High-intent SEO pages (static)
+const seoPages = [
+  '/instant-loan-salaried',
+  '/small-instant-loan',
+  '/low-cibil-personal-loan',
+].map((path) => ({
+  url: `${baseUrl}${path}`,
+  lastModified: new Date(),
+  changeFrequency: 'weekly' as const,
+  priority: 0.8,
+}));
+
+// Best personal loan in [city] (dynamic)
+const seoCities = [
+  'delhi',
+  'mumbai',
+  'bangalore',
+  'hyderabad',
+  'chennai',
+  'kolkata',
+  'pune',
+  'ahmedabad',
+  'jaipur',
+  'lucknow',
+  'surat',
+  'kanpur',
+];
+
+const bestPersonalLoanCityPages = seoCities.map((city) => ({
+  url: `${baseUrl}/best-personal-loan/${city}`,
+  lastModified: new Date(),
+  changeFrequency: 'weekly' as const,
+  priority: 0.75,
+}));
+
 export default function sitemap(): MetadataRoute.Sitemap {
   // Static pages
   const staticPages = [
@@ -56,5 +91,11 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.6,
   }));
 
-  return [...staticPages, ...bankPages, ...cityPages];
+  return [
+    ...staticPages,
+    ...seoPages,
+    ...bestPersonalLoanCityPages,
+    ...bankPages,
+    ...cityPages,
+  ];
 }

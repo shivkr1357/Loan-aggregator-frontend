@@ -7,6 +7,15 @@ const apiClient = axios.create({
   },
 });
 
+enum LoanType {
+  PERSONAL = 'personal',
+  CAR = 'car',
+  BIKE = 'bike',
+  HOME = 'home',
+  BUSINESS = 'business',
+  EDUCATION = 'education',
+}
+
 const BANKS_CACHE_KEY_PREFIX = 'loan_aggregator_banks:';
 const BANKS_CACHE_TTL_MS = 10 * 60 * 1000; // 10 minutes
 
@@ -17,7 +26,7 @@ type GetBanksFilters = {
   city?: string;
   minLoanAmount?: number;
   maxLoanAmount?: number;
-  loanType?: 'personal' | 'car' | 'bike' | 'home' | 'business' | 'education';
+  loanType?: LoanType;
   sortBy?: 'interest' | 'processingFee';
 };
 

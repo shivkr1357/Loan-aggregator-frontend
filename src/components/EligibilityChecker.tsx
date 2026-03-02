@@ -76,15 +76,27 @@ export function EligibilityChecker() {
   };
 
   if (step === 'result' && result) {
+    const hasLenders = result.eligibleCount > 0;
+    
     return (
-      <div className="bg-gradient-to-br from-green-50 to-emerald-50 border-2 border-green-200 rounded-xl p-8">
+      <div className={`${hasLenders 
+        ? 'bg-gradient-to-br from-green-50 to-emerald-50 border-2 border-green-200' 
+        : 'bg-gradient-to-br from-gray-50 to-blue-50 border-2 border-gray-300'
+      } rounded-xl p-8`}>
         <div className="text-center mb-6">
-          <div className="text-6xl mb-4">🎉</div>
+          {hasLenders && <div className="text-6xl mb-4">🎉</div>}
+          {!hasLenders && <div className="text-6xl mb-4">🔍</div>}
           <h3 className="text-3xl font-bold text-gray-800 mb-2">
-            You are eligible for {result.eligibleCount} lender{result.eligibleCount !== 1 ? 's' : ''}!
+            {hasLenders 
+              ? `You are eligible for ${result.eligibleCount} lender${result.eligibleCount !== 1 ? 's' : ''}!`
+              : 'No lenders found for your criteria'
+            }
           </h3>
           <p className="text-gray-600">
-            Based on your criteria, we found {result.eligibleCount} lender{result.eligibleCount !== 1 ? 's' : ''} ready to offer you a loan.
+            {hasLenders
+              ? `Based on your criteria, we found ${result.eligibleCount} lender${result.eligibleCount !== 1 ? 's' : ''} ready to offer you a loan.`
+              : "We couldn't find lenders matching your current criteria. Try adjusting your loan amount, income, or city to see more options."
+            }
           </p>
         </div>
 
@@ -126,12 +138,21 @@ export function EligibilityChecker() {
           >
             Check Again
           </button>
-          <Link
-            href={`/loans?minIncome=${formData.monthlyIncome}&employmentType=${formData.employmentType}&city=${formData.city}&minLoanAmount=${formData.loanAmount}`}
-            className="bg-primary-600 hover:bg-primary-700 text-white px-6 py-2 rounded-lg font-semibold transition"
-          >
-            Compare All {result.eligibleCount} Lenders →
-          </Link>
+          {hasLenders ? (
+            <Link
+              href={`/loans?minIncome=${formData.monthlyIncome}&employmentType=${formData.employmentType}&city=${formData.city}&minLoanAmount=${formData.loanAmount}`}
+              className="bg-primary-600 hover:bg-primary-700 text-white px-6 py-2 rounded-lg font-semibold transition"
+            >
+              Compare All {result.eligibleCount} Lenders →
+            </Link>
+          ) : (
+            <Link
+              href="/loans"
+              className="bg-primary-600 hover:bg-primary-700 text-white px-6 py-2 rounded-lg font-semibold transition"
+            >
+              Browse All Lenders →
+            </Link>
+          )}
         </div>
       </div>
     );
