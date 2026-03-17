@@ -10,13 +10,12 @@ import { generateStructuredData } from '@/lib/seo';
 export default function CityPage({ params }: { params: { city: string } }) {
   const city = params.city;
   const cityName = city.charAt(0).toUpperCase() + city.slice(1);
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://loanpilot.in';
 
   useEffect(() => {
     logEvent('page_view', { page: `city-${city}` });
     analyticsApi.recordVisit(`city/${city}`, cityName).catch(console.error);
 
-    // Add structured data for FinancialProduct
+    // Add structured data for FinancialProduct (uses non-www origin via seo.ts)
     const financialProductData = generateStructuredData('FinancialProduct', {
       name: `Loan in ${cityName}`,
       description: `Compare and find the best loan rates in ${cityName}`,

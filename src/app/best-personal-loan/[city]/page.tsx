@@ -2,7 +2,8 @@ import { Metadata } from 'next';
 import Link from 'next/link';
 import { generateMetadata as baseMetadata } from '@/lib/seo';
 
-const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://loanpilot.in';
+// Match root canonical: always non-www.
+const baseUrl = 'https://loanpilot.in';
 
 const CITIES: Record<string, string> = {
   delhi: 'Delhi',

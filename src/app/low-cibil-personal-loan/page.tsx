@@ -2,7 +2,8 @@ import { Metadata } from 'next';
 import Link from 'next/link';
 import { generateMetadata as baseMetadata } from '@/lib/seo';
 
-const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://loanpilot.in';
+// Match root canonical domain.
+const baseUrl = 'https://loanpilot.in';
 
 export const metadata: Metadata = baseMetadata({
   title: 'Low CIBIL Personal Loan - Bad Credit Loan India 2025 | LoanPilot',

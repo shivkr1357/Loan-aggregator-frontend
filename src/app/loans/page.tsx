@@ -88,9 +88,13 @@ function LoansPageContent() {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-4xl font-bold mb-8 text-center">
-        Compare Loans
+      <h1 className="text-4xl font-bold mb-2 text-center">
+        Compare Loans – Instant Loan Comparison
       </h1>
+      <p className="text-center text-gray-600 mb-8 max-w-2xl mx-auto">
+        Use LoanPilot to compare personal loans, business loans, and more from 20+ lenders in one place.
+        Instant loan comparison with real interest rates, fees, and eligibility filters.
+      </p>
 
       {/* EMI Calculator */}
       <div className="mb-12">

@@ -1,6 +1,7 @@
 import { MetadataRoute } from 'next';
 
-const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://loanpilot.in';
+// Always use the non-www origin in sitemap URLs to match canonicals.
+const baseUrl = 'https://loanpilot.in';
 
 // High-intent SEO pages (static)
 const seoPages = [

@@ -37,6 +37,7 @@ export const metadata: Metadata = {
     ],
     canonical: 'https://loanpilot.in',
   }),
+  metadataBase: new URL('https://loanpilot.in'),
   other: {
     'verify-admitad': 'b37a211f6b',
   },
@@ -47,7 +48,6 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://loanpilot.in';
   const structuredData = generateStructuredData('WebSite');
   const orgData = generateStructuredData('Organization');
 

@@ -21,6 +21,11 @@ export function generateMetadata({
     'personal loan India',
     'loan aggregator',
     'compare loans',
+    'instant loan comparison',
+    'loanpilot',
+    'loan pilot',
+    'loanpilot app',
+    'loanpilot loan comparison',
     'loan EMI calculator',
     'quick loan approval',
     'online loan application',
@@ -30,7 +35,8 @@ export function generateMetadata({
   noindex = false,
   type = 'website',
 }: SEOProps = {}): Metadata {
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://loanpilot.in';
+  // Force a single canonical origin (non-www) for all metadata and OG/Twitter URLs.
+  const baseUrl = 'https://loanpilot.in';
   // Ensure canonical URL has no trailing slash (except root)
   let canonicalUrl = canonical || baseUrl;
   if (canonicalUrl !== baseUrl && canonicalUrl.endsWith('/')) {
@@ -87,7 +93,8 @@ export function generateMetadata({
 }
 
 export function generateStructuredData(type: 'WebSite' | 'FinancialProduct' | 'Organization', data?: any) {
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://loanpilot.in';
+  // Keep structured data URLs consistent with the same non-www origin.
+  const baseUrl = 'https://loanpilot.in';
 
   const baseStructuredData = {
     '@context': 'https://schema.org',

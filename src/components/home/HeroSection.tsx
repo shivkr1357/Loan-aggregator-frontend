@@ -9,13 +9,14 @@ export function HeroSection() {
             <span className="text-green-300 font-semibold">⚡ Loans from ₹2,000 to ₹50 Lakhs • Approval in 2 Minutes</span>
           </div>
           <h1 className="text-5xl md:text-6xl font-bold mb-6">
-            Compare 20+ Lenders
+            LoanPilot – Compare 20+ Lenders
             <br />
-            <span className="text-primary-400">Find Your Best Loan Rate</span>
+            <span className="text-primary-400">Instant Loan Comparison in India</span>
           </h1>
           <p className="text-xl mb-8 text-gray-300">
-            Compare rates from top banks and NBFCs. Quick approval, competitive rates (10.5% onwards),
-            and flexible repayment options. <strong>No hidden charges.</strong>
+            LoanPilot is your instant loan comparison app to compare rates from top banks and NBFCs.
+            Quick approval, competitive rates (10.5% onwards), and flexible repayment options.{' '}
+            <strong>No hidden charges.</strong>
           </p>
           <div className="flex flex-wrap gap-4 justify-center mb-8">
             <Link
