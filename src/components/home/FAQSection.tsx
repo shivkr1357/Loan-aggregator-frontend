@@ -2,6 +2,11 @@ import Link from 'next/link';
 
 const faqs = [
   {
+    question: 'Is LoanPilot a loan comparison website? What is “loan pilot” or “credit pilot loan app”?',
+    answer:
+      'Yes. LoanPilot is a free loan comparison website in India. People often search for “loan pilot,” “loanpilot,” or a “credit pilot loan app” when they want one place to compare credit and loan offers — that is exactly what we do: show multiple banks and NBFCs side by side. We are not a lender and we are not the same as any single lender’s app.',
+  },
+  {
     question: 'Is LoanPilot free to use?',
     answer:
       "Yes, absolutely! Comparing loans on LoanPilot is 100% free. We don't charge users any fees. We earn a commission from lenders when you apply through our platform, but you pay the same rate as if you applied directly.",

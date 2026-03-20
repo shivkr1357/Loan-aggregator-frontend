@@ -91,9 +91,14 @@ function LoansPageContent() {
       <h1 className="text-4xl font-bold mb-2 text-center">
         Compare Loans – Instant Loan Comparison
       </h1>
-      <p className="text-center text-gray-600 mb-8 max-w-2xl mx-auto">
-        Use LoanPilot to compare personal loans, business loans, and more from 20+ lenders in one place.
-        Instant loan comparison with real interest rates, fees, and eligibility filters.
+      <p className="text-center text-gray-600 mb-4 max-w-2xl mx-auto">
+        Use LoanPilot (loan pilot) as your <strong>loan comparison website</strong> to{' '}
+        <strong>compare loans</strong> — personal, home, business &amp; more — from 20+ lenders in one
+        place. <strong>Instant loan comparison</strong> with real rates, fees, and eligibility filters.
+      </p>
+      <p className="text-center text-sm text-gray-500 mb-8 max-w-2xl mx-auto">
+        Looking for a <strong>credit pilot loan app</strong> style experience? You get side‑by‑side offers
+        here instead of a single lender. Independent platform; not affiliated with third‑party apps.
       </p>
 
       {/* EMI Calculator */}

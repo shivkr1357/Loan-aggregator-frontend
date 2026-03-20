@@ -11,21 +11,26 @@ interface SEOProps {
 }
 
 export function generateMetadata({
-  title = 'LoanPilot - Compare Best Personal Loans in India',
-  description = 'Compare and find the best personal loan rates from top lenders in India. Quick approval, competitive rates, flexible repayment options. Apply now!',
+  title = 'LoanPilot | Compare Loans & Instant Loan Comparison | Loan Comparison Website India',
+  description =
+    'LoanPilot (Loan Pilot) — India’s loan comparison website. Compare loans from 20+ lenders, instant loan comparison, EMI calculator & eligibility check. Free aggregator; not a lender. Like a credit pilot loan app for comparing offers across banks & NBFCs.',
   keywords = [
+    'loanpilot',
+    'loan pilot',
+    'credit pilot loan app',
+    'compare loans',
+    'instant loan comparison',
+    'loan comparison website',
+    'onekredit',
     'personal loan',
     'loan comparison',
     'best loan rates',
     'instant loan',
     'personal loan India',
     'loan aggregator',
-    'compare loans',
-    'instant loan comparison',
-    'loanpilot',
-    'loan pilot',
     'loanpilot app',
     'loanpilot loan comparison',
+    'online loan comparison India',
     'loan EMI calculator',
     'quick loan approval',
     'online loan application',

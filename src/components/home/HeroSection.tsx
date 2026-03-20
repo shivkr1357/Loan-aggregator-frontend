@@ -13,10 +13,16 @@ export function HeroSection() {
             <br />
             <span className="text-primary-400">Instant Loan Comparison in India</span>
           </h1>
-          <p className="text-xl mb-8 text-gray-300">
-            LoanPilot is your instant loan comparison app to compare rates from top banks and NBFCs.
-            Quick approval, competitive rates (10.5% onwards), and flexible repayment options.{' '}
-            <strong>No hidden charges.</strong>
+          <p className="text-xl mb-4 text-gray-300">
+            <strong>LoanPilot</strong> (often searched as <strong>loan pilot</strong>) is India&apos;s{' '}
+            <strong>loan comparison website</strong>: <strong>compare loans</strong> from 20+ banks &amp;
+            NBFCs, run an <strong>instant loan comparison</strong>, and check eligibility — like a{' '}
+            <strong>credit pilot loan app</strong> that shows multiple offers, not just one lender.
+          </p>
+          <p className="text-lg mb-8 text-gray-400 max-w-3xl mx-auto">
+            Quick approval, competitive rates (10.5% onwards), flexible repayment.{' '}
+            <strong>No hidden charges.</strong> We are an independent comparator; not affiliated with any
+            single lender app.
           </p>
           <div className="flex flex-wrap gap-4 justify-center mb-8">
             <Link

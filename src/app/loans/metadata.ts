@@ -2,10 +2,17 @@ import { Metadata } from 'next';
 import { generateMetadata } from '@/lib/seo';
 
 export const metadata: Metadata = generateMetadata({
-  title: 'Compare Personal Loans - Best Interest Rates & EMI Calculator | LoanPilot',
+  title: 'Compare Loans | Instant Loan Comparison & Loan Comparison Website | LoanPilot',
   description:
-    'Compare personal loan rates from top banks and NBFCs in India. Use our EMI calculator, filter by interest rate, processing fee, and employment type. Find the best loan deals instantly!',
+    'Compare loans on LoanPilot — loan comparison website for India. Instant loan comparison across 20+ lenders, EMI calculator, filters by income & city. Loan Pilot / loanpilot; not a lender.',
   keywords: [
+    'compare loans',
+    'instant loan comparison',
+    'loan comparison website',
+    'loanpilot',
+    'loan pilot',
+    'credit pilot loan app',
+    'onekredit',
     'compare personal loans',
     'loan interest rates',
     'EMI calculator',
@@ -13,7 +20,6 @@ export const metadata: Metadata = generateMetadata({
     'loan comparison India',
     'personal loan rates',
     'loan processing fee',
-    'instant loan comparison',
   ],
   canonical: 'https://loanpilot.in/loans',
 });

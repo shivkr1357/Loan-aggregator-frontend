@@ -12,17 +12,23 @@ const inter = Inter({ subsets: ['latin'] });
 // Default metadata for pages without their own metadata
 export const metadata: Metadata = {
   ...genMeta({
-    title: 'LoanPilot - Compare Best Loans in India | Instant Approval',
+    title: 'LoanPilot | Compare Loans, Instant Loan Comparison & Loan Comparison Website India',
     description:
-      'Compare and find the best loan rates from top lenders in India. Quick approval, competitive rates (10.5% onwards), flexible repayment options. Apply online now!',
+      'LoanPilot (Loan Pilot) — free loan comparison website in India. Compare loans from 20+ banks & NBFCs, instant loan comparison, EMI calculator. Searches for credit pilot loan app or loan pilot lead here. Independent; not a lender.',
     keywords: [
+      'loanpilot',
+      'loan pilot',
+      'credit pilot loan app',
+      'compare loans',
+      'instant loan comparison',
+      'loan comparison website',
+      'onekredit',
       'loan',
       'loan comparison',
       'best loan rates India',
       'instant loan approval',
       'loan online',
       'loan aggregator',
-      'compare loans',
       'loan EMI calculator',
       'quick loan',
       'online loan application',
