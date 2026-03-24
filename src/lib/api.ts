@@ -148,6 +148,25 @@ export const adminApi = {
   },
 };
 
+type ApiSuccessEnvelope<T> = {
+  success?: boolean;
+  message?: string;
+  data?: T;
+};
+
+export const newsletterApi = {
+  subscribe: async (payload: {
+    email: string;
+    marketingConsent: boolean;
+    source?: string;
+  }) => {
+    const response = await apiClient.post<
+      ApiSuccessEnvelope<{ message: string; alreadySubscribed?: boolean }>
+    >(apiEndpoints.newsletter.subscribe, payload);
+    return response.data;
+  },
+};
+
 export const authApi = {
   syncUser: async (data: {
     idToken: string;

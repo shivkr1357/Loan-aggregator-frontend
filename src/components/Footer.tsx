@@ -1,17 +1,17 @@
 import Link from 'next/link';
-import Image from 'next/image';
-import logo from '@/assets/Logo.svg';
+import { FooterNewsletter } from '@/components/FooterNewsletter';
 
 export function Footer() {
   return (
     <footer className="bg-navy-900 text-white mt-auto text-center">
       <div className="container mx-auto px-4 py-8">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 text-left">
           <div>
             <p className="text-gray-400 text-sm">
               Your trusted partner for finding the best personal loan rates.
             </p>
           </div>
+          <FooterNewsletter />
           <div>
             <h4 className="font-semibold mb-4">Quick Links</h4>
             <ul className="space-y-2 text-sm">

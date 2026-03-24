@@ -23,4 +23,7 @@ export const apiEndpoints = {
     sync: `${API_URL}/api/auth/sync`,
     getUser: `${API_URL}/api/auth/user`,
   },
+  newsletter: {
+    subscribe: `${API_URL}/api/newsletter/subscribe`,
+  },
 };
