@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import Image from 'next/image';
+import { useMemo, useState } from 'react';
 
 interface Bank {
   id: string;
@@ -21,6 +21,63 @@ interface Bank {
 
 interface LoanComparisonTableProps {
   banks: Bank[];
+}
+
+const REMOTE_LOGO_FALLBACK: Record<string, string> = {
+  'hdfc-bank': 'https://logos.hunter.io/hdfcbank.com',
+  'icici-bank': 'https://logos.hunter.io/icicibank.com',
+  'axis-bank': 'https://logos.hunter.io/axisbank.com',
+  'kotak-mahindra-bank': 'https://logos.hunter.io/kotak.com',
+  'idfc-first-bank': 'https://logos.hunter.io/idfcfirstbank.com',
+  'bajaj-finserv': 'https://logos.hunter.io/bajajfinserv.in',
+};
+
+function getBaseSlug(slug?: string): string | null {
+  if (!slug) return null;
+  return (
+    slug.replace(/-?(personal|car|bike|home|business|education)-loan$/, '') ||
+    slug.replace(/-?(personal|car|bike|home|business|education)$/, '') ||
+    slug
+  );
+}
+
+function BankLogo({ bank }: { bank: Bank }) {
+  const candidates = useMemo(() => {
+    const sources: string[] = [];
+    const baseSlug = getBaseSlug(bank.slug || '');
+
+    if (bank.logoUrl) sources.push(bank.logoUrl);
+    if (baseSlug) {
+      sources.push(`/banks/${baseSlug}.png`);
+      const remote = REMOTE_LOGO_FALLBACK[baseSlug];
+      if (remote) sources.push(remote);
+    }
+
+    // Keep first occurrence only
+    return sources.filter((src, idx) => src && sources.indexOf(src) === idx);
+  }, [bank.logoUrl, bank.slug]);
+
+  const [index, setIndex] = useState(0);
+  const src = candidates[index];
+
+  if (!src) {
+    return (
+      <div className="w-12 h-8 bg-gray-200 rounded flex items-center justify-center text-xs font-semibold">
+        {bank.name.slice(0, 2)}
+      </div>
+    );
+  }
+
+  return (
+    // eslint-disable-next-line @next/next/no-img-element
+    <img
+      src={src}
+      alt={bank.name}
+      className="w-12 h-8 object-contain"
+      loading="lazy"
+      onError={() => setIndex((prev) => prev + 1)}
+    />
+  );
 }
 
 export function LoanComparisonTable({ banks }: LoanComparisonTableProps) {
@@ -67,21 +124,7 @@ export function LoanComparisonTable({ banks }: LoanComparisonTableProps) {
             >
               <td className="p-4">
                 <div className="flex items-center gap-3">
-                  {bank.logoUrl ? (
-                    <div className="w-12 h-8 relative">
-                      <Image
-                        src={bank.logoUrl}
-                        alt={bank.name}
-                        fill
-                        className="object-contain"
-                        sizes="48px"
-                      />
-                    </div>
-                  ) : (
-                    <div className="w-12 h-8 bg-gray-200 rounded flex items-center justify-center text-xs font-semibold">
-                      {bank.name.slice(0, 2)}
-                    </div>
-                  )}
+                  <BankLogo bank={bank} />
                   <div>
                     <div className="font-semibold text-gray-900">{bank.name}</div>
                     {bank.rating && (

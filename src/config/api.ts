@@ -26,4 +26,8 @@ export const apiEndpoints = {
   newsletter: {
     subscribe: `${API_URL}/api/newsletter/subscribe`,
   },
+  referral: {
+    createProgram: `${API_URL}/api/referral/program`,
+    summary: `${API_URL}/api/referral/summary`,
+  },
 };

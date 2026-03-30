@@ -34,6 +34,7 @@ function ApplyForm() {
     lenderId: '',
     lenderName: '',
     consent: false,
+    referredByCode: '',
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
@@ -46,6 +47,7 @@ function ApplyForm() {
     const lenderNameParam = searchParams.get('lenderName');
     const loanAmountParam = searchParams.get('loanAmount');
     const tenureParam = searchParams.get('tenure');
+    const referralCodeParam = searchParams.get('ref');
     
     if (cityParam) {
       setFormData((prev) => ({ ...prev, city: cityParam }));
@@ -58,6 +60,12 @@ function ApplyForm() {
     }
     if (loanAmountParam) {
       setFormData((prev) => ({ ...prev, loanAmount: loanAmountParam }));
+    }
+    if (referralCodeParam) {
+      setFormData((prev) => ({
+        ...prev,
+        referredByCode: referralCodeParam.toUpperCase(),
+      }));
     }
     // Note: tenureParam is in months, but we don't store it in the form
   }, [searchParams]);
@@ -152,6 +160,7 @@ function ApplyForm() {
         consent: formData.consent,
         lenderId: formData.lenderId || undefined,
         lenderName: formData.lenderName || undefined,
+        referredByCode: formData.referredByCode || undefined,
       });
 
       // Track lead submission

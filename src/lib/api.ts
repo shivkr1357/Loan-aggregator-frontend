@@ -106,6 +106,7 @@ export const leadApi = {
     consent: boolean;
     lenderId?: string;
     lenderName?: string;
+    referredByCode?: string;
   }) => {
     const response = await apiClient.post(apiEndpoints.leads.create, data);
     return response.data;
@@ -146,6 +147,19 @@ export const adminApi = {
     });
     return response.data;
   },
+  updateLeadStatus: async (
+    leadId: string,
+    data: {
+      status: 'pending' | 'redirected' | 'approved' | 'rejected';
+      rewardType?: 'commission' | 'interest_discount';
+    }
+  ) => {
+    const response = await apiClient.patch(
+      `${apiEndpoints.admin.leads}/${leadId}/status`,
+      data
+    );
+    return response.data;
+  },
 };
 
 type ApiSuccessEnvelope<T> = {
@@ -180,6 +194,19 @@ export const authApi = {
   },
   getUser: async (userId: string) => {
     const response = await apiClient.get(`${apiEndpoints.auth.getUser}/${userId}`);
+    return response.data;
+  },
+};
+
+export const referralApi = {
+  createProgram: async (email: string) => {
+    const response = await apiClient.post(apiEndpoints.referral.createProgram, { email });
+    return response.data;
+  },
+  getSummary: async (email: string) => {
+    const response = await apiClient.get(apiEndpoints.referral.summary, {
+      params: { email },
+    });
     return response.data;
   },
 };
